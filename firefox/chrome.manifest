@@ -1,0 +1,4 @@
+content   varnam_ime                 chrome/content/
+skin      varnam_ime   classic/1.0   chrome/skin/
+locale    varnam_ime   en-US         chrome/locale/en-US/
+overlay	chrome://browser/content/browser.xul	chrome://varnam_ime/content/ff-overlay.xul

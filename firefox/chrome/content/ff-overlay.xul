@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="chrome://varnam_ime/skin/overlay.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://varnam_ime/locale/overlay.dtd">
+<overlay id="varnam_ime-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  <script src="ff-overlay.js"/>
+  <stringbundleset id="stringbundleset">
+    <stringbundle id="varnam_ime-strings" src="chrome://varnam_ime/locale/overlay.properties"/>
+  </stringbundleset>
+  <popup id="contentAreaContextMenu">
+    <menu id="context-varnam_ime" label="&varnam_imeContext.label;" insertafter="context-stop">
+      <menupopup>
+      <menuitem label="&varnam_imeContext.label.malayalam;" accesskey="&varnam_imeContext.accesskey;" oncommand="varnam_ime.onMenuItemCommand(event)" />
+    </menupopup>
+    </menu>
+  </popup>
+
+  <menupopup id="menu_ToolsPopup">
+    <menuitem id="varnam_ime-hello" label="&varnam_ime.label;"
+              oncommand="varnam_ime.onMenuItemCommand(event);"/>
+  </menupopup>
+</overlay>
