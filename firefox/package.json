@@ -1,0 +1,9 @@
+{
+    "name": "varnam-ime",
+    "license": "MPL 2.0",
+    "author": "Navaneeth",
+    "version": "0.1",
+    "fullName": "Varnam IME",
+    "id": "jid1-iufO1SfBv6wvAw",
+    "description": "Client for libvarnam"
+}
