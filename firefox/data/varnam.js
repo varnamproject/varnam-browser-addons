@@ -16,6 +16,7 @@
     self.port.on('showPopup', function(data) {
         populateSuggestions(data);
         var active = document.activeElement;
+        console.log(active.type);
         if (active) {
             positionPopup(active);
         }
@@ -23,8 +24,17 @@
 
     function positionPopup(editor) {
         var pos = getWordBeginingPosition(editor);
-        $(suggestionDiv).css('display', "block");
-        $(suggestionDiv).offset({ top: editor.offsetTop + pos.top, left: editor.offsetLeft + pos.left});
+        //$(suggestionDiv).css('display', "block");
+        var rects = editor.getClientRects();
+        if (rects.length > 0) {
+            var rect = rects[0];
+            $(suggestionDiv).css({
+                display: 'block',
+                position: 'absolute',
+                top: rect.top + pos.top,
+                left: rect.left + pos.left
+            });
+        }
     }
 
     function getWordBeginingPosition(editor) {
