@@ -1,16 +1,17 @@
 (function() {
     var data = require("self").data,
         contextMenu = require("context-menu"),
-        request = require("request").Request;
+        tabs = require('tabs'),
+        request = require("request").Request,
+        contentScripts = [data.url("jquery-1.8.2.min.js"), data.url("textinputs_jquery.js"), data.url("caret.js"), data.url("varnam.js")];
 
     var workers = [];
     var pageMod = require("page-mod");
-    pageMod.PageMod({
+    var page = pageMod.PageMod({
         include: '*',
         contentScriptWhen: 'ready',
-        contentScriptFile: [data.url("jquery-1.8.2.min.js"), data.url("varnam.js")],
+        contentScriptFile: contentScripts,
         onAttach: function(worker) {
-            console.log("onAttach");
             workers.push(worker);
             worker.on("detach", function() {
                 var index = workers.indexOf(worker);
@@ -31,7 +32,7 @@
         var searchMenu = contextMenu.Menu({
             label: "Varnam IME",
             context: kontext,
-            contentScriptFile: [data.url("jquery-1.8.2.min.js"), data.url("varnam.js")],
+            contentScriptFile: contentScripts,
             items: [english, malayalam],
             onMessage: function(data) {
                 fetchSuggestions(data);
@@ -52,9 +53,7 @@
             },
             onComplete: function(response) {
                 var worker = getActiveWorker();
-                console.log('onComplete');
                 if (worker) {
-                    console.log('here inside');
                     worker.port.emit('showPopup', response.json);
                 }
             }
@@ -64,7 +63,6 @@
 
     function getActiveWorker() {
         for (var i = 0; i < workers.length; i++) {
-            console.log("in loop");
             if (workers[i].tab === tabs.activeTab) {
                 return workers[i];
             };
@@ -75,5 +73,6 @@
     var searchMenu = createContextMenu(contextMenu.SelectorContext("textarea, input"));
 
     // Uncomment below line for testing
+    page.include.add(data.url("test.html"));
     require("tabs").activeTab.url = data.url("test.html");
 })();
