@@ -1,13 +1,29 @@
 (function() {
     var suggestionDivId = "varnam_ime_suggestions",
         suggestionDiv = "#" + suggestionDivId,
-        suggestionList = suggestionDiv + ' select',
-        suggestedItem = suggestionDiv + suggestionList + ' option';
+        suggestionList = suggestionDiv + ' ul',
+        suggestedItem = suggestionDiv + suggestionList + ' option',
+        KEYS = {
+            ESCAPE: 27,
+            ENTER: 13,
+            TAB: 9,
+            SPACE: 32,
+            PERIOD: 190,
+            DOWN_ARROW: 40,
+            QUESTION: 191,
+            EXCLAMATION: 49,
+            COMMA: 188,
+            LEFT_BRACKET: 57,
+            RIGHT_BRACKET: 48,
+            SEMICOLON: 59
+        };
 
     self.on('click', function(node, data) {
         var active = document.activeElement;
         if (active) {
             $(active).data('varnam-lang', data);
+            $(active).data('varnam-input-value', active.value);
+
             $(active).off('keyup', hookVarnamIME);
             $(active).on('keyup', hookVarnamIME);
         }
@@ -19,22 +35,43 @@
         console.log(active.type);
         if (active) {
             positionPopup(active);
+            stylePopup();
         }
     });
 
+    function hidePopup() {
+        $(suggestionDiv).hide();
+    }
+
     function positionPopup(editor) {
         var pos = getWordBeginingPosition(editor);
-        //$(suggestionDiv).css('display', "block");
         var rects = editor.getClientRects();
         if (rects.length > 0) {
             var rect = rects[0];
             $(suggestionDiv).css({
                 display: 'block',
                 position: 'absolute',
-                top: rect.top + pos.top,
-                left: rect.left + pos.left
+                top: rect.top + pos.top + 20,
+                left: rect.left + pos.left,
+                'z-index': 2500
             });
         }
+    }
+
+    function stylePopup() {
+        $(suggestionList).css({
+            border: '1px solid rgba(0, 0, 0, 0.2)',
+            'border-radius': '6px 6px 6px 6px',
+            'box-shadow': '0 5px 10px rgba(0, 0, 0, 0.2)',
+            display: 'block',
+            float: 'left',
+            'list-style': 'none outside none',
+            margin: '0',
+            padding: '5px 0',
+            position: 'static',
+            top: '100%',
+            'z-index': '1000'
+        });
     }
 
     function getWordBeginingPosition(editor) {
@@ -56,32 +93,46 @@
     function populateSuggestions(data) {
         createSuggestionsDiv();
         var html = "";
-        var textWidth = 0;
         $.each(data.result, function(index, value) {
             if (index === 0) {
-                html += '<option selected>' + value + '</option>';
+                html += '<li>' + value + '</li>';
             } else {
-                html += '<option>' + value + '</option>';
-            }
-            if (textWidth < value.length) {
-                textWidth = value.length;
+                html += '<li>' + value + '</li>';
             }
         });
-        $(suggestionList).html(html).css('height', (data.result.length + 1) + 'em').css('width', (textWidth + 2) + 'em');
+        $(suggestionList).html(html);
     }
 
     function createSuggestionsDiv() {
         if ($(suggestionDiv).length <= 0) {
-            var divHtml = '<div id="' + suggestionDivId + '" style="display: none;"><select multiple="false"></select></div>';
+            var divHtml = '<div id="' + suggestionDivId + '" style="display: none;"><ul></ul></div>';
             $("body").append(divHtml);
         }
     }
 
-    function hookVarnamIME() {
-        self.postMessage({
-            lang: $(document.activeElement).data('varnam-lang'),
-            word: getWordUnderCaret(document.activeElement).word
-        });
+    function hookVarnamIME(event) {
+        if (event.keyCode == KEYS.ESCAPE) {
+            hidePopup();
+            return;
+        }
+        if (hasTextChanged()) {
+            // Fetch suggestions from server
+            self.postMessage({
+                lang: $(document.activeElement).data('varnam-lang'),
+                word: getWordUnderCaret(document.activeElement).word
+            });
+        }
+    }
+
+    function hasTextChanged() {
+        var active = document.activeElement;
+        var oldValue = $(active).data('varnam-input-value');
+        var newValue = $(active).val();
+        if (oldValue != newValue) {
+            $(active).data('varnam-input-value', active.value);
+            return true;
+        }
+        return false;
     }
 
     function isWordBoundary(text) {
