@@ -9,6 +9,7 @@
             TAB: 9,
             SPACE: 32,
             PERIOD: 190,
+            UP_ARROW: 38,
             DOWN_ARROW: 40,
             QUESTION: 191,
             EXCLAMATION: 49,
@@ -95,7 +96,7 @@
         var html = "";
         $.each(data.result, function(index, value) {
             if (index === 0) {
-                html += '<li>' + value + '</li>';
+                html += '<li id="varnam-ime-selected">' + value + '</li>';
             } else {
                 html += '<li>' + value + '</li>';
             }
@@ -115,12 +116,48 @@
             hidePopup();
             return;
         }
+
+        if (event.keyCode == KEYS.DOWN_ARROW || event.keyCode == KEYS.UP_ARROW) {
+            handleSelectionOnSuggestionList(event);
+        }
+
+
         if (hasTextChanged()) {
             // Fetch suggestions from server
             self.postMessage({
                 lang: $(document.activeElement).data('varnam-lang'),
                 word: getWordUnderCaret(document.activeElement).word
             });
+        }
+    }
+
+    function handleSelectionOnSuggestionList(event) {
+        if (event.keyCode == KEYS.UP_ARROW) {
+            var selected = $("#varnam-ime-selected");
+            selected.removeAttr('id');
+            selected.removeAttr('style');
+            var nextSelection = null;
+            if (selected.prev().length == 0) {
+                nextSelection = selected.siblings().last();
+            } else {
+                nextSelection = selected.prev();
+            }
+            nextSelection.attr("id", "varnam-ime-selected");
+            nextSelection.css({'background-color': 'grey'});
+        }
+
+        if (event.keyCode == KEYS.DOWN_ARROW) {
+            var selected = $("#varnam-ime-selected");
+            selected.removeAttr('id');
+            selected.removeAttr('style');
+            var nextSelection = null;
+            if (selected.next().length == 0) {
+                nextSelection = selected.siblings().first();
+            } else {
+                nextSelection = selected.next();
+            }
+            nextSelection.attr("id", "varnam-ime-selected");
+            nextSelection.css({'background-color': 'grey'});
         }
     }
 
