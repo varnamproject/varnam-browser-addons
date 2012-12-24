@@ -2,7 +2,8 @@
     var suggestionDivId = "varnam_ime_suggestions",
         suggestionDiv = "#" + suggestionDivId,
         suggestionList = suggestionDiv + ' ul',
-        suggestedItem = suggestionDiv + suggestionList + ' option',
+        selectedItemId = 'varnam_ime_selected',
+        selectedItem =  "#" + selectedItemId,
         KEYS = {
             ESCAPE: 27,
             ENTER: 13,
@@ -17,7 +18,9 @@
             LEFT_BRACKET: 57,
             RIGHT_BRACKET: 48,
             SEMICOLON: 59
-        };
+        },
+        WORD_BREAK_CHARS = [KEYS.ENTER, KEYS.TAB, KEYS.SPACE, KEYS.PERIOD, KEYS.QUESTION, KEYS.EXCLAMATION, KEYS.COMMA, KEYS.LEFT_BRACKET, KEYS.RIGHT_BRACKET, KEYS.SEMICOLON],
+        skipTextChange = false;
 
     self.on('click', function(node, data) {
         var active = document.activeElement;
@@ -25,8 +28,10 @@
             $(active).data('varnam-lang', data);
             $(active).data('varnam-input-value', active.value);
 
-            $(active).off('keyup', hookVarnamIME);
-            $(active).on('keyup', hookVarnamIME);
+            $(active).off('keydown', hookVarnamIME);
+            $(active).on('keydown', hookVarnamIME);
+            $(active).off('keyup', showSuggestions);
+            $(active).on('keyup', showSuggestions);
         }
     });
 
@@ -96,7 +101,7 @@
         var html = "";
         $.each(data.result, function(index, value) {
             if (index === 0) {
-                html += '<li id="varnam-ime-selected">' + value + '</li>';
+                html += '<li id="' + selectedItemId + '">' + value + '</li>';
             } else {
                 html += '<li>' + value + '</li>';
             }
@@ -111,7 +116,16 @@
         }
     }
 
-    function hookVarnamIME(event) {
+    function replaceWordUnderCaret(text) {
+        var editor = document.activeElement;
+        var w = getWordUnderCaret(document.activeElement);
+        $(editor).setSelection(w.start, w.end);
+        $(editor).replaceSelectedText(text);
+        hidePopup();
+    }
+
+    function hookVarnamIME(e) {
+        var event = $.event.fix(e);
         if (event.keyCode == KEYS.ESCAPE) {
             hidePopup();
             return;
@@ -121,7 +135,19 @@
             handleSelectionOnSuggestionList(event);
         }
 
+        if (isWordBreakKey(event.keyCode)) {
+            var text = getSelectedText();
+            if (text !== undefined && text !== '') {
+                replaceWordUnderCaret(text);
+                if (event.keyCode == KEYS.ENTER) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+            }
+        }
+    }
 
+    function showSuggestions() {
         if (hasTextChanged()) {
             // Fetch suggestions from server
             self.postMessage({
@@ -133,7 +159,7 @@
 
     function handleSelectionOnSuggestionList(event) {
         if (event.keyCode == KEYS.UP_ARROW) {
-            var selected = $("#varnam-ime-selected");
+            var selected = $(selectedItem);
             selected.removeAttr('id');
             selected.removeAttr('style');
             var nextSelection = null;
@@ -142,12 +168,14 @@
             } else {
                 nextSelection = selected.prev();
             }
-            nextSelection.attr("id", "varnam-ime-selected");
-            nextSelection.css({'background-color': 'grey'});
+            nextSelection.attr("id", selectedItemId);
+            nextSelection.css({
+                'background-color': 'grey'
+            });
         }
 
         if (event.keyCode == KEYS.DOWN_ARROW) {
-            var selected = $("#varnam-ime-selected");
+            var selected = $(selectedItem);
             selected.removeAttr('id');
             selected.removeAttr('style');
             var nextSelection = null;
@@ -156,8 +184,10 @@
             } else {
                 nextSelection = selected.next();
             }
-            nextSelection.attr("id", "varnam-ime-selected");
-            nextSelection.css({'background-color': 'grey'});
+            nextSelection.attr("id", selectedItemId);
+            nextSelection.css({
+                'background-color': 'grey'
+            });
         }
     }
 
@@ -177,6 +207,18 @@
             return true;
         }
         return false;
+    }
+
+    function isWordBreakKey(keyCode) {
+        var exists = $.inArray(keyCode, WORD_BREAK_CHARS) == -1 ? false : true;
+        if (exists) {
+            return true;
+        }
+        return false;
+    }
+
+    function getSelectedText() {
+        return $(selectedItem).text();
     }
 
     function getWordUnderCaret(editor) {
