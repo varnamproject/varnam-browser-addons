@@ -1,0 +1,48 @@
+{
+    "name": "Varnam IME",
+    "version": "0.1",
+    "manifest_version": 2,
+    "description": "Client for libvarnam. This is a chrome extension for varnam; an indic language transliterator",
+    "homepage_url": "http://www.varnamproject.com/editor",
+    "incognito": "split",
+    "browser_action": {
+        "default_popup": "popup.html",
+        "default_icon": "24.png",
+        "default_title" : "Varnam IME"
+    },
+
+    "background": {
+        "scripts": [
+            "js/background.js"
+        ]
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "http://*/*",
+                "https://*/*"
+            ],
+            "css": ["css/varnam.css"],
+            "js": [
+                "js/jquery-1.8.2.min.js",
+                "js/textinputs_jquery.js",
+                "js/caret.js",
+                "js/varnam.js"
+            ]
+        }
+    ],
+    "permissions": [
+        "contextMenus",
+        "tabs",
+        "http://*/",
+        "https://*/",
+        "http://www.varnamproject.com/*"
+    ],
+     "icons": {
+          "128":"128.png",
+          "48": "48.png",
+          "24": "24.png",
+          "19":"19.png",
+          "16": "icon.png"
+    }
+}
