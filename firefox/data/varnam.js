@@ -3,7 +3,7 @@
         suggestionDiv = "#" + suggestionDivId,
         suggestionList = suggestionDiv + ' ul',
         selectedItemId = 'varnam_ime_selected',
-        selectedItem =  "#" + selectedItemId,
+        selectedItem = "#" + selectedItemId,
         KEYS = {
             ESCAPE: 27,
             ENTER: 13,
@@ -39,7 +39,7 @@
         populateSuggestions(data);
         var active = document.activeElement;
         console.log(active.type);
-        if (active) {
+        if (active && getWordUnderCaret(active).word == data.input) {
             positionPopup(active);
             stylePopup();
         }
@@ -53,15 +53,36 @@
         var pos = getWordBeginingPosition(editor);
         var rects = editor.getClientRects();
         if (rects.length > 0) {
+            var popupHeight = $(suggestionDiv).height();
+            var popupWidth = $(suggestionDiv).width();
+            console.log("popup height " + popupHeight);
+            console.log("popup width " + popupWidth);
+            console.log("window scrollY " + window.scrollY);
+            console.log("editor offset " + $(editor).offset().top);
+            console.log("window height " + $(window).height());
+            console.log("document height " + $(document).height());
+
             var rect = rects[0];
+            console.log('popup position ' + (window.scrollY + rect.top + pos.top));
             $(suggestionDiv).css({
                 display: 'block',
                 position: 'absolute',
-                top: rect.top + pos.top + 20,
+                top: window.scrollY + rect.top + pos.top,
                 left: rect.left + pos.left,
-                'z-index': 2500
+                'z-index': 25000
             });
         }
+
+
+
+        //     if ((y + popupHeight) > editor.position().top + editor.innerHeight()) {
+        //         popup.css('top', (y - popupHeight) + 'px');
+        //     }
+        //     if ((x + popupWidth) > editor.position().left + editor.innerWidth()) {
+        //         popup.css('left', (x - popupWidth) + 'px');
+        //     }
+        // console.log($(suggestionDiv).height());
+        // console.log($(suggestionDiv).innerHeight());
     }
 
     function stylePopup() {
@@ -91,7 +112,9 @@
         var pos = $(editor).getCaretPosition();
 
         // Moving the cursor back to the old position
-        $(editor).setSelection(prev.start, prev.end);
+        if (prev) {
+            $(editor).setSelection(prev.start, prev.end);
+        }
 
         return pos;
     }
@@ -130,25 +153,32 @@
             hidePopup();
             return;
         }
+        skipTextChange = false;
 
         if (event.keyCode == KEYS.DOWN_ARROW || event.keyCode == KEYS.UP_ARROW) {
             handleSelectionOnSuggestionList(event);
         }
 
-        if (isWordBreakKey(event.keyCode)) {
-            var text = getSelectedText();
-            if (text !== undefined && text !== '') {
-                replaceWordUnderCaret(text);
-                if (event.keyCode == KEYS.ENTER) {
-                    event.preventDefault();
-                    event.stopPropagation();
+        if (isSuggestionsVisible()) {
+            if (isWordBreakKey(event.keyCode)) {
+                var text = getSelectedText();
+                if (text !== undefined && text !== '') {
+                    replaceWordUnderCaret(text);
+                    if (event.keyCode == KEYS.ENTER) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
                 }
+                skipTextChange = true;
             }
+        }
+        else if (isWordBreakKey(event.keyCode)) {
+            skipTextChange = true;
         }
     }
 
     function showSuggestions() {
-        if (hasTextChanged()) {
+        if (hasTextChanged() && !skipTextChange) {
             // Fetch suggestions from server
             self.postMessage({
                 lang: $(document.activeElement).data('varnam-lang'),
@@ -221,11 +251,15 @@
         return $(selectedItem).text();
     }
 
+    function isSuggestionsVisible() {
+        return $(suggestionDiv).is(':visible');
+    }
+
     function getWordUnderCaret(editor) {
         var insertionPoint = editor.selectionStart;
         var startAt = 0;
         var endsAt = 0;
-        var lastPosition = editor.value.length + 1;
+        var lastPosition = $(editor).val().length + 1;
         var text = '';
 
         // Moving back till we hit a word boundary
@@ -252,7 +286,7 @@
         return {
             start: startAt,
             end: endsAt,
-            word: editor.value.substring(startAt, endsAt)
+            word: $(editor).val().substring(startAt, endsAt)
         };
     }
 })();

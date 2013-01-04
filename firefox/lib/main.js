@@ -43,7 +43,7 @@
 
     function fetchSuggestions(data) {
         var suggestionsRequest = request({
-            url: 'http://varnamproject.com/tl',
+            url: 'http://localhost:8081/tl',
             headers: {
                 Connection: 'keep-alive'
             },
