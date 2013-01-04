@@ -53,36 +53,23 @@
         var pos = getWordBeginingPosition(editor);
         var rects = editor.getClientRects();
         if (rects.length > 0) {
-            var popupHeight = $(suggestionDiv).height();
-            var popupWidth = $(suggestionDiv).width();
-            console.log("popup height " + popupHeight);
-            console.log("popup width " + popupWidth);
-            console.log("window scrollY " + window.scrollY);
-            console.log("editor offset " + $(editor).offset().top);
-            console.log("window height " + $(window).height());
-            console.log("document height " + $(document).height());
-
             var rect = rects[0];
-            console.log('popup position ' + (window.scrollY + rect.top + pos.top));
+            var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+            var scrollLeft = document.documentElement.scrollLeft || document.body.scrollLeft;
+            var height = $(window).height() - $(suggestionDiv).height();
+            var topPos = rect.top + pos.top + 20;
+            if (height < topPos) {
+                topPos = topPos - $(suggestionDiv).height() - 40;
+            }
+
             $(suggestionDiv).css({
                 display: 'block',
                 position: 'absolute',
-                top: window.scrollY + rect.top + pos.top,
-                left: rect.left + pos.left,
-                'z-index': 25000
+                top: topPos + scrollTop + 'px',
+                left: rect.left + scrollLeft + pos.left + 'px',
+                'z-index': '25000'
             });
         }
-
-
-
-        //     if ((y + popupHeight) > editor.position().top + editor.innerHeight()) {
-        //         popup.css('top', (y - popupHeight) + 'px');
-        //     }
-        //     if ((x + popupWidth) > editor.position().left + editor.innerWidth()) {
-        //         popup.css('left', (x - popupWidth) + 'px');
-        //     }
-        // console.log($(suggestionDiv).height());
-        // console.log($(suggestionDiv).innerHeight());
     }
 
     function stylePopup() {
@@ -90,6 +77,7 @@
             border: '1px solid rgba(0, 0, 0, 0.2)',
             'border-radius': '6px 6px 6px 6px',
             'box-shadow': '0 5px 10px rgba(0, 0, 0, 0.2)',
+            'background-color': '#FFF',
             display: 'block',
             float: 'left',
             'list-style': 'none outside none',
@@ -97,7 +85,8 @@
             padding: '5px 0',
             position: 'static',
             top: '100%',
-            'z-index': '1000'
+            'z-index': '25000',
+            'text-align': 'left'
         });
     }
 
@@ -124,7 +113,7 @@
         var html = "";
         $.each(data.result, function(index, value) {
             if (index === 0) {
-                html += '<li id="' + selectedItemId + '">' + value + '</li>';
+                html += '<li id="' + selectedItemId + '" style="background-color: #aac2ff; color: #000">' + value + '</li>';
             } else {
                 html += '<li>' + value + '</li>';
             }
@@ -135,7 +124,7 @@
     function createSuggestionsDiv() {
         if ($(suggestionDiv).length <= 0) {
             var divHtml = '<div id="' + suggestionDivId + '" style="display: none;"><ul></ul></div>';
-            $("body").append(divHtml);
+            $(document.body).append(divHtml);
         }
     }
 
@@ -171,8 +160,7 @@
                 }
                 skipTextChange = true;
             }
-        }
-        else if (isWordBreakKey(event.keyCode)) {
+        } else if (isWordBreakKey(event.keyCode)) {
             skipTextChange = true;
         }
     }
@@ -200,7 +188,8 @@
             }
             nextSelection.attr("id", selectedItemId);
             nextSelection.css({
-                'background-color': 'grey'
+                'background-color': '#aac2ff',
+                'color': '#000'
             });
         }
 
@@ -216,7 +205,8 @@
             }
             nextSelection.attr("id", selectedItemId);
             nextSelection.css({
-                'background-color': 'grey'
+                'background-color': '#aac2ff',
+                'color': '#000'
             });
         }
     }
