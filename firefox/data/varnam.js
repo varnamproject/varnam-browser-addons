@@ -36,10 +36,10 @@
     });
 
     self.port.on('showPopup', function(data) {
-        populateSuggestions(data);
         var active = document.activeElement;
         console.log(active.type);
         if (active && getWordUnderCaret(active).word == data.input) {
+            populateSuggestions(data);
             positionPopup(active);
             stylePopup();
         }
@@ -118,13 +118,22 @@
                 html += '<li>' + value + '</li>';
             }
         });
+        html += "<li>" + data.input + "</li>";
         $(suggestionList).html(html);
     }
 
     function createSuggestionsDiv() {
         if ($(suggestionDiv).length <= 0) {
             var divHtml = '<div id="' + suggestionDivId + '" style="display: none;"><ul></ul></div>';
-            $(document.body).append(divHtml);
+            var div = document.createElement('div');
+            div.setAttribute('id', suggestionDivId);
+            div.setAttribute('style', 'display: none;');
+            div.appendChild(document.createElement('ul'));
+
+            var bodies = document.getElementsByTagName('body');
+            for (var i = 0; i < bodies.length; i++) {
+                bodies[i].appendChild(div);
+            }
         }
     }
 

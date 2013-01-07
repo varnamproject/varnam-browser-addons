@@ -30,7 +30,7 @@
                 data: 'ml'
             });
         var searchMenu = contextMenu.Menu({
-            label: "Varnam IME",
+            label: "Varnam",
             context: kontext,
             contentScriptFile: contentScripts,
             items: [english, malayalam],
@@ -43,7 +43,7 @@
 
     function fetchSuggestions(data) {
         var suggestionsRequest = request({
-            url: 'http://localhost:8081/tl',
+            url: 'http://varnamproject.com/tl',
             headers: {
                 Connection: 'keep-alive'
             },
