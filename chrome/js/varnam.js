@@ -44,12 +44,9 @@
 
 
     function displaySugg(data) {
-        populateSuggestions(data);
-         if (data.result.length <= 0){
-            return;
-        }
         var active = document.activeElement;
-        if (active) {
+        if (active && getWordUnderCaret(active).word == data.input) {
+            populateSuggestions(data);
             positionPopup(active);
         }
     }
@@ -90,8 +87,9 @@
         var pos = $(editor).getCaretPosition();
 
         // Moving the cursor back to the old position
-        $(editor).setSelection(prev.start, prev.end);
-
+        if (prev) {
+            $(editor).setSelection(prev.start, prev.end);
+        }
         return pos;
     }
 
@@ -109,6 +107,7 @@
                 html += '<li>' + value + '</li>';
             }
         });
+        html += "<li>" + data.input + "</li>";
         $(suggestionList).html(html);
     }
 
@@ -146,22 +145,31 @@
             hidePopup();
             return;
         }
+        skipTextChange = false;
         if(event.keyCode == KEYS.DOWN_ARROW || event.keyCode == KEYS.UP_ARROW ){
                 handleSelectionOnSuggestionList(event);
                 event.preventDefault();
                 event.stopPropagation();
         }
-        if(isWordBreakKey(event.keyCode)){
-             var word =  $("li.varnam_selected").first().text();
-              if (word !== undefined && $.trim(word) !== '' ) {
-               replaceWordUnderCaret(word);
-               if (event.keyCode == KEYS.ENTER) {
-                    event.preventDefault();
-                    event.stopPropagation();
+        if (isSuggestionsVisible()) {
+            if(isWordBreakKey(event.keyCode)){
+                 var word =  $("li.varnam_selected").first().text();
+                  if (word !== undefined && $.trim(word) !== '' ) {
+                   replaceWordUnderCaret(word);
+                   if (event.keyCode == KEYS.ENTER) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
                 }
+                skipTextChange = true;
             }
+        }else if(isWordBreakKey(event.keyCode)) {
+            skipTextChange = true;
         }
+    }
 
+    function isSuggestionsVisible() {
+        return $(suggestionDiv).is(':visible');
     }
 
      function replaceWordUnderCaret(text) {
@@ -173,7 +181,7 @@
     }
 
     function showSuggestions() {
-        if (hasTextChanged()) {
+        if (hasTextChanged() && !skipTextChange) {
            var params = {
                 'text': getWordUnderCaret(document.activeElement).word,
                 'lang': $(document.activeElement).data('varnam-lang')

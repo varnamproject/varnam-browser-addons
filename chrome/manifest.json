@@ -1,6 +1,6 @@
 {
     "name": "Varnam IME",
-    "version": "0.1",
+    "version": "0.2",
     "manifest_version": 2,
     "description": "Client for libvarnam. This is a chrome extension for varnam; an indic language transliterator",
     "homepage_url": "http://www.varnamproject.com/editor",
