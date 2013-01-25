@@ -4,8 +4,8 @@
 	suggestionList = suggestionDiv + ' ul',
 	selectedItemId = 'varnam_ime_selected',
 	selectedItem = "#" + selectedItemId,
-    closeButtonId = 'varnam_suggestions_close',
-    closeButton = '#' + closeButtonId, 
+	closeButtonId = 'varnam_suggestions_close',
+	closeButton = '#' + closeButtonId,
 	KEYS = {
 		ESCAPE: 27,
 		ENTER: 13,
@@ -159,10 +159,10 @@
 			div.setAttribute('id', suggestionDivId);
 			div.setAttribute('style', 'display: none;');
 
-            var span = document.createElement('span');
-            span.setAttribute('id', closeButtonId);
-            span.setAttribute('class', 'closebtn');
-            span.innerHTML = 'X';
+			var span = document.createElement('span');
+			span.setAttribute('id', closeButtonId);
+			span.setAttribute('class', 'closebtn');
+			span.innerHTML = 'X';
 			div.appendChild(span);
 			div.appendChild(document.createElement('ul'));
 
@@ -170,7 +170,7 @@
 			for (var i = 0; i < bodies.length; i++) {
 				bodies[i].appendChild(div);
 			}
-            $(closeButton).on('click', hidePopup);
+			$(closeButton).on('click', hidePopup);
 		}
 	}
 
@@ -180,6 +180,14 @@
 		$(editor).setSelection(w.start, w.end);
 		$(editor).replaceSelectedText(text);
 		hidePopup();
+		learnWord(text);
+	}
+
+	function learnWord(text) {
+		self.port.emit("learnWord", {
+			lang: $(document.activeElement).data('varnam-lang'),
+			word: text
+		});
 	}
 
 	function handleSelectionOnSuggestionList(event) {
