@@ -232,6 +232,8 @@ function handleSelectionOnSuggestionList(event) {
 		}
 		nextSelection.attr("id", selectedItemId);
 		nextSelection.addClass('selected');
+		event.preventDefault();
+		return false;
 	}
 
 	if (event.keyCode == KEYS.DOWN_ARROW) {
@@ -246,6 +248,8 @@ function handleSelectionOnSuggestionList(event) {
 		}
 		nextSelection.attr("id", selectedItemId);
 		nextSelection.addClass('selected');
+		event.preventDefault();
+		return false;
 	}
 }
 
