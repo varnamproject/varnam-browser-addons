@@ -3,6 +3,7 @@
         contextMenu = require("context-menu"),
         tabs = require('tabs'),
         request = require("request").Request,
+        prefs = require("simple-prefs").prefs,
         contentScripts = [data.url("jquery-1.8.2.min.js"), data.url("textinputs_jquery.js"), data.url("caret.js"), data.url("varnam.js")];
 
     var workers = [];
@@ -10,13 +11,16 @@
     var page = pageMod.PageMod({
         include: '*',
         contentScriptWhen: 'ready',
+        contentStyleFile: [data.url('varnam.css')],
         contentScriptFile: contentScripts,
+        attachTo: ["existing", "top"],
         onAttach: function(worker) {
             workers.push(worker);
             worker.on("detach", function() {
                 var index = workers.indexOf(worker);
                 if (index >= 0) workers.splice(index, 1);
             });
+            worker.port.on("fetchSuggestions", fetchSuggestions);
         }
     });
 
@@ -32,10 +36,14 @@
         var searchMenu = contextMenu.Menu({
             label: "Varnam",
             context: kontext,
-            contentScriptFile: contentScripts,
+            contentScriptWhen: 'ready',
+            contentScript: "self.on('click', function(node, data) {self.postMessage({'data': data, 'id': node.id});});",
             items: [english, malayalam],
             onMessage: function(data) {
-                fetchSuggestions(data);
+                var worker = getActiveWorker();
+                if (worker) {
+                    worker.port.emit('initVarnam', data);
+                }
             }
         });
         return searchMenu;
@@ -72,7 +80,4 @@
 
     var searchMenu = createContextMenu(contextMenu.SelectorContext("textarea, input"));
 
-    // Uncomment below line for testing
-    page.include.add(data.url("test.html"));
-    require("tabs").activeTab.url = data.url("test.html");
 })();

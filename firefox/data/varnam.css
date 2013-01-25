@@ -1,0 +1,24 @@
+#varnam_ime_suggestions li:hover {
+    background: #aac2ff;
+}
+
+#varnam_ime_suggestions .selected {
+    background-color: #aac2ff;
+    color: #000;
+}
+
+#varnam_ime_suggestions ul {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 6px 6px 6px 6px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    background-color: #FFF;
+    display: block;
+    float: left;
+    list-style: none outside none;
+    margin: 0;
+    padding: 12px 0 5px;
+    position: static;
+    top: 100%;
+    z-index: 25000;
+    text-align: left;
+}

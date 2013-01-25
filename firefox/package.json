@@ -5,5 +5,21 @@
     "version": "0.1",
     "fullName": "Varnam",
     "id": "jid1-iufO1SfBv6wvAw",
-    "description": "Transliterator for indian languages"
+    "description": "Transliterator for indian languages",
+    "preferences": [{
+        "name": "language",
+        "title": "Default language",
+        "type": "menulist",
+        "value": "en",
+        "options": [
+            {
+                "value": "en",
+                "label": "English"
+            },
+            {
+                "value": "ml",
+                "label": "Malayalam"
+            }
+        ]
+    }]
 }
