@@ -74,19 +74,26 @@
 	}
 
 	function showSuggestions() {
-		if (hasTextChanged() && ! skipTextChange) {
-			// Fetch suggestions from server
-			self.port.emit("fetchSuggestions", {
-				lang: $(document.activeElement).data('varnam-lang'),
-				word: getWordUnderCaret(document.activeElement).word
-			});
+		var wordUnderCaret = getWordUnderCaret(document.activeElement);
+		if ($.trim(wordUnderCaret.word) != '') {
+			if (hasTextChanged() && ! skipTextChange) {
+				// Fetch suggestions from server
+				self.port.emit("fetchSuggestions", {
+					lang: $(document.activeElement).data('varnam-lang'),
+					word: wordUnderCaret.word
+				});
+			}
+		}
+		else {
+			hidePopup();
 		}
 	}
 
 	function showPopup(data) {
 		var active = document.activeElement;
 		if (active != undefined && active != document.body) {
-			if (getWordUnderCaret(active).word == data.input) {
+			var wordUnderCaret = getWordUnderCaret(active);
+			if ($.trim(wordUnderCaret.word) != '' && wordUnderCaret.word == data.input) {
 				populateSuggestions(data);
 				positionPopup(active);
 			}
