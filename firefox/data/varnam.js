@@ -76,6 +76,9 @@ function showSuggestions() {
 	var wordUnderCaret = getWordUnderCaret(document.activeElement);
 	if ($.trim(wordUnderCaret.word) != '') {
 		if (hasTextChanged() && ! skipTextChange) {
+
+			showProgress();
+
 			// Fetch suggestions from server
 			self.port.emit("fetchSuggestions", {
 				lang: $(document.activeElement).data('varnam-lang'),
@@ -86,6 +89,13 @@ function showSuggestions() {
 	else {
 		hidePopup();
 	}
+}
+
+function showProgress() {
+	createSuggestionsDiv();
+	var html = '<li><img src="' + self.options.progressImage +  '" /></li>';
+	$(suggestionList).html(html);
+	positionPopup(document.activeElement);
 }
 
 function showPopup(data) {
@@ -111,7 +121,7 @@ function positionPopup(editor) {
 		var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
 		var scrollLeft = document.documentElement.scrollLeft || document.body.scrollLeft;
 		var height = $(window).height() - $(suggestionDiv).height();
-		var topPos = rect.top + pos.top + 20;
+		var topPos = rect.top + pos.top + 25;
 		if (height < topPos) {
 			topPos = topPos - $(suggestionDiv).height() - 40;
 		}

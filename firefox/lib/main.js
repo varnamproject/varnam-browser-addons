@@ -5,6 +5,10 @@ request = require("request").Request,
 prefs = require("simple-prefs").prefs,
 contentScripts = [data.url("jquery-1.8.2.min.js"), data.url("textinputs_jquery.js"), data.url("caret.js"), data.url("varnam.js")];
 
+var options = {
+	progressImage: data.url('progress.gif')
+};
+
 var workers = [];
 var pageMod = require("page-mod");
 var page = pageMod.PageMod({
@@ -12,6 +16,7 @@ var page = pageMod.PageMod({
 	contentScriptWhen: 'ready',
 	contentStyleFile: [data.url('varnam.css')],
 	contentScriptFile: contentScripts,
+	contentScriptOptions: options,
 	attachTo: ["existing", "top"],
 	onAttach: function(worker) {
 		workers.push(worker);
