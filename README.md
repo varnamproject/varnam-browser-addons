@@ -15,8 +15,8 @@ To activate varnam, click on the textbox, right click and choose the required la
 
 # Screenshots
 
-![Using varnam to type indic text in search engines](screenshot-ff-bing.png)
-![Using varnam to type indic text in Gmail chat](screenshot-ff-gmailchat.png)
+![Using varnam to type indic text in search engines](https://raw.github.com/navaneeth/varnam-browser-addons/master/screenshot-ff-bing.png)
+![Using varnam to type indic text in Gmail chat](https://raw.github.com/navaneeth/varnam-browser-addons/master/screenshot-ff-gmailchat.png)
 
 # Known issues
 
