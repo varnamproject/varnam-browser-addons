@@ -21,7 +21,8 @@ KEYS = {
 	SEMICOLON: 59
 },
 WORD_BREAK_CHARS = [KEYS.ENTER, KEYS.TAB, KEYS.SPACE, KEYS.PERIOD, KEYS.QUESTION, KEYS.EXCLAMATION, KEYS.COMMA, KEYS.LEFT_BRACKET, KEYS.RIGHT_BRACKET, KEYS.SEMICOLON],
-skipTextChange = false;
+skipTextChange = false,
+activeElement = null;
 
 self.port.on('initVarnam', initVarnam);
 self.port.on('showPopup', showPopup);
@@ -45,6 +46,7 @@ function initVarnam(data) {
 
 function hookVarnamIME(e) {
 	var event = $.event.fix(e);
+	activeElement = event.target;
 	if (event.keyCode == KEYS.ESCAPE) {
 		hidePopup();
 		return;
@@ -93,7 +95,7 @@ function showSuggestions() {
 
 function showProgress() {
 	createSuggestionsDiv();
-	var html = '<li><img src="' + self.options.progressImage +  '" /></li>';
+	var html = '<li><img src="' + self.options.progressImage + '" /></li>';
 	$(suggestionList).html(html);
 	positionPopup(document.activeElement);
 }
@@ -166,6 +168,17 @@ function populateSuggestions(data) {
 	});
 	html += "<li>" + data.input + "</li>";
 	$(suggestionList).html(html);
+
+	$(suggestionList + ' li').off('click', suggestedItemClicked);
+	$(suggestionList + ' li').on('click', suggestedItemClicked);
+}
+
+function suggestedItemClicked(event) {
+	var text = $(this).text();
+	if (activeElement) {
+		$(activeElement).focus();
+		replaceWordUnderCaret(text);
+	}
 }
 
 function createSuggestionsDiv() {
