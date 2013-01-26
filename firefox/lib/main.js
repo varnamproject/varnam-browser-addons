@@ -44,6 +44,7 @@ function createContextMenu(kontext) {
 		contentScriptWhen: 'ready',
 		contentScript: "self.on('click', function(node, data) {self.postMessage({'data': data, 'id': node.id});});",
 		items: [english, malayalam],
+		attachTo: ["existing", "top"],
 		onMessage: function(data) {
 			var worker = getActiveWorker();
 			if (worker) {

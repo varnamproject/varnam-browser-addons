@@ -20,7 +20,8 @@ To activate varnam, click on the textbox, right click and choose the required la
 
 # Known issues
 
-* Firefox extension is not stable on Gmail and Gmail chat. [#15](https://github.com/navaneeth/varnam-browser-addons/issues/15)
+* Firefox extension will not work on Gmail chat when the chat window is popped out. [#15](https://github.com/navaneeth/varnam-browser-addons/issues/15)
+* Both addons won't work on Gmail compose box.
 * Both addons won't work on Wikipedia's search box. [#1](https://github.com/navaneeth/varnam-browser-addons/issues/1) &amp; [#5](https://github.com/navaneeth/varnam-browser-addons/issues/5)
 
 # Authors
