@@ -182,6 +182,17 @@
         $(editor).setSelection(w.start, w.end);
         $(editor).replaceSelectedText(text);
         hidePopup();
+        learnWord(text);
+    }
+
+    function learnWord(text) {
+         var params = {
+                'lang': $(document.activeElement).data('varnam-lang'),
+                'text': text
+            };
+        chrome.extension.sendMessage({action: "learnWord", text: params.text,lang: params.lang,
+            params: $.param(params)
+         });
     }
 
     function showSuggestions() {
