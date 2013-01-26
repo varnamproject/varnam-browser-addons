@@ -100,3 +100,9 @@ function getActiveWorker() {
 
 var searchMenu = createContextMenu(contextMenu.SelectorContext("textarea, input"));
 
+var addontab = require("addon-page");
+exports.main = function (options, callbacks) {
+    if (options.loadReason == 'install') {
+        require("tabs").open(data.url("howto.html"));
+    }
+};
