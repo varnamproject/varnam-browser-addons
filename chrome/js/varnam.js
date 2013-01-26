@@ -196,13 +196,18 @@
     }
 
     function showSuggestions() {
-        if (hasTextChanged() && !skipTextChange) {
-           var params = {
-                'text': getWordUnderCaret(document.activeElement).word,
-                'lang': $(document.activeElement).data('varnam-lang')
-            };
-            var vurl = 'http://www.varnamproject.com/tl?' + $.param(params);
-            chrome.extension.sendMessage({action: "fetch","vurl": vurl});
+        var wordUnderCaret = getWordUnderCaret(document.activeElement);
+        if ($.trim(wordUnderCaret.word) !== '') {
+            if (hasTextChanged() && !skipTextChange) {
+               var params = {
+                    'text': wordUnderCaret.word,
+                    'lang': $(document.activeElement).data('varnam-lang')
+                };
+                var vurl = 'http://www.varnamproject.com/tl?' + $.param(params);
+                chrome.extension.sendMessage({action: "fetch","vurl": vurl});
+            }
+        }else{
+            hidePopup();
         }
     }
 
