@@ -24,6 +24,8 @@
         suggestionDiv = "#" + suggestionDivId,
         suggestionList = suggestionDiv + ' ul',
         suggestedItem = suggestionDiv + suggestionList + ' option',
+        closeButtonId = 'varnam_suggestions_close',
+        closeButton = '#' + closeButtonId,
         KEYS = {
             ESCAPE: 27,
             ENTER: 13,
@@ -113,8 +115,10 @@
 
     function createSuggestionsDiv() {
         if ($(suggestionDiv).length <= 0) {
-            var divHtml = '<div id="' + suggestionDivId + '" style="display: none;"><ul></ul></div>';
+            var divHtml = '<div id="' + suggestionDivId + '" style="display: none;"><span id="'+closeButtonId+'"">X</span><ul></ul></div>';
+
             $("body").append(divHtml);
+            $(closeButton).on('click', hidePopup);
         }
     }
     function handleSelectionOnSuggestionList(event){
