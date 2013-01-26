@@ -212,6 +212,7 @@
         var wordUnderCaret = getWordUnderCaret(document.activeElement);
         if ($.trim(wordUnderCaret.word) !== '') {
             if (hasTextChanged() && !skipTextChange) {
+                showProgress();
                var params = {
                     'text': wordUnderCaret.word,
                     'lang': $(document.activeElement).data('varnam-lang')
@@ -222,6 +223,14 @@
         }else{
             hidePopup();
         }
+    }
+
+    function showProgress() {
+        createSuggestionsDiv();
+        var imgURL = chrome.extension.getURL("progress.gif");
+        var html = '<li><img src="' + imgURL + '" /></li>';
+        $(suggestionList).html(html);
+        positionPopup(document.activeElement);
     }
 
     function hasTextChanged() {

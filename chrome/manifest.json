@@ -44,5 +44,8 @@
           "24": "24.png",
           "19":"19.png",
           "16": "icon.png"
-    }
+    },
+    "web_accessible_resources": [
+        "progress.gif"
+    ]
 }
