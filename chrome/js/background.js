@@ -5,7 +5,7 @@ var varnamMenu = chrome.contextMenus.create({
 var english = chrome.contextMenus.create({
     "title": "English",
     "parentId": varnamMenu,
-    "id": "varnam_eng",
+    "id": "varnam_en",
     "contexts": ["editable"],
     "onclick": handleLanguageSelection
 });
