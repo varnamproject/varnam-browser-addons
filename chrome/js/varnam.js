@@ -209,6 +209,10 @@
     }
 
     function showSuggestions() {
+        var lang = $(document.activeElement).data('varnam-lang');
+        if (lang == 'en') {
+            return;
+        }
         var wordUnderCaret = getWordUnderCaret(document.activeElement);
         if ($.trim(wordUnderCaret.word) !== '') {
             if (hasTextChanged() && !skipTextChange) {
