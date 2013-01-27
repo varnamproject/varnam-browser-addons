@@ -44,6 +44,7 @@ function createContextMenu(kontext) {
 		contentScriptWhen: 'ready',
 		contentScript: "self.on('click', function(node, data) {self.postMessage({'data': data, 'id': node.id});});",
 		items: [english, malayalam],
+		attachTo: ["existing", "top"],
 		onMessage: function(data) {
 			var worker = getActiveWorker();
 			if (worker) {
@@ -99,3 +100,9 @@ function getActiveWorker() {
 
 var searchMenu = createContextMenu(contextMenu.SelectorContext("textarea, input"));
 
+var addontab = require("addon-page");
+exports.main = function (options, callbacks) {
+    if (options.loadReason == 'install') {
+        require("tabs").open(data.url("howto.html"));
+    }
+};

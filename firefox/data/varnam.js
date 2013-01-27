@@ -76,6 +76,12 @@ function hookVarnamIME(e) {
 
 function showSuggestions() {
 	var wordUnderCaret = getWordUnderCaret(document.activeElement);
+
+    var lang = $(document.activeElement).data('varnam-lang');
+    if (lang == 'en') {
+        return;
+    }
+
 	if ($.trim(wordUnderCaret.word) != '') {
 		if (hasTextChanged() && ! skipTextChange) {
 
