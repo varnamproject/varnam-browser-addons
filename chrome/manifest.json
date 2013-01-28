@@ -2,7 +2,7 @@
     "name": "Varnam",
     "version": "1.0",
     "manifest_version": 2,
-    "description": "Varnam is a transliteration based input system for indian languages. Varnam uses phonetic based transliteration and enables indic input on all the webpages. After installing, right click on any input field and choose the desired language from the 'Varnam' menu.",
+    "description": "Varnam is a transliteration based input system for indian languages. Varnam enables indic input on all the webpages",
     "homepage_url": "http://www.varnamproject.com/",
     "incognito": "split",
     "browser_action": {
@@ -16,6 +16,7 @@
             "js/background.js"
         ]
     },
+
     "content_scripts": [
         {
             "matches": [
