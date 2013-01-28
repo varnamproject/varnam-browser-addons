@@ -1,5 +1,5 @@
 var varnamMenu = chrome.contextMenus.create({
-    "title": "Varnam IME",
+    "title": "Varnam",
     "contexts": ["editable"]
 });
 var english = chrome.contextMenus.create({
