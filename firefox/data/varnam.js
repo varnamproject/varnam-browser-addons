@@ -27,10 +27,26 @@ activeElement = null;
 self.port.on('initVarnam', initVarnam);
 self.port.on('showPopup', showPopup);
 
+function findElementById(id) {
+	var element = document.getElementById(id);
+	if (element) return element;
+
+	var frames = document.getElementsByTagName('iframe');
+	for (var i = 0; i < frames.length; i++) {
+		var frame = frames[i];
+		try {
+			element = frame.contentDocument.documentElement.getElementById(id);
+			if (element) return element;
+		}
+		catch(e) {}
+	}
+
+	return null;
+}
+
 function initVarnam(data) {
-	var active = document.getElementById(data.id);
+	var active = findElementById(data.id);
 	if (!active) {
-		console.log("Failed to fetch using id. Getting activeElement. Id was " + data.id);
 		active = document.activeElement;
 	}
 	if (active != document.body) {
@@ -77,10 +93,10 @@ function hookVarnamIME(e) {
 function showSuggestions() {
 	var wordUnderCaret = getWordUnderCaret(document.activeElement);
 
-    var lang = $(document.activeElement).data('varnam-lang');
-    if (lang == 'en') {
-        return;
-    }
+	var lang = $(document.activeElement).data('varnam-lang');
+	if (lang == 'en') {
+		return;
+	}
 
 	if ($.trim(wordUnderCaret.word) != '') {
 		if (hasTextChanged() && ! skipTextChange) {
@@ -101,8 +117,12 @@ function showSuggestions() {
 
 function showProgress() {
 	createSuggestionsDiv();
-	var html = '<li><img src="' + self.options.progressImage + '" /></li>';
-	$(suggestionList).html(html);
+
+	$(suggestionList).empty();
+	$(suggestionList).append($('<li>').append($('<img>', {
+		src: self.options.progressImage
+	})));
+
 	positionPopup(document.activeElement);
 }
 
@@ -164,16 +184,26 @@ function getWordBeginingPosition(editor) {
 
 function populateSuggestions(data) {
 	createSuggestionsDiv();
-	var html = "";
+	$(suggestionList).empty();
+
 	$.each(data.result, function(index, value) {
 		if (index === 0) {
-			html += '<li id="' + selectedItemId + '" class="selected">' + value + '</li>';
+			$(suggestionList).append($("<li>", {
+				class: "selected",
+				id: selectedItemId,
+				text: value
+			}));
 		} else {
-			html += '<li>' + value + '</li>';
+			$(suggestionList).append($("<li>", {
+				text: value
+			}));
 		}
 	});
-	html += "<li>" + data.input + "</li>";
-	$(suggestionList).html(html);
+
+	// Appending the English text
+	$(suggestionList).append($("<li>", {
+		text: data.input
+	}));
 
 	$(suggestionList + ' li').off('click', suggestedItemClicked);
 	$(suggestionList + ' li').on('click', suggestedItemClicked);
@@ -189,7 +219,6 @@ function suggestedItemClicked(event) {
 
 function createSuggestionsDiv() {
 	if ($(suggestionDiv).length <= 0) {
-		var divHtml = '<div id="' + suggestionDivId + '" style="display: none;"><ul></ul></div>';
 		var div = document.createElement('div');
 		div.setAttribute('id', suggestionDivId);
 		div.setAttribute('style', 'display: none;');
@@ -197,7 +226,8 @@ function createSuggestionsDiv() {
 		var span = document.createElement('span');
 		span.setAttribute('id', closeButtonId);
 		span.setAttribute('class', 'closebtn');
-		span.innerHTML = 'X';
+		var xMark = document.createTextNode('X');
+		span.appendChild(xMark);
 		div.appendChild(span);
 		div.appendChild(document.createElement('ul'));
 

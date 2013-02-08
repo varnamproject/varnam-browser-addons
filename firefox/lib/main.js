@@ -32,11 +32,13 @@ var page = pageMod.PageMod({
 function createContextMenu(kontext) {
 	var english = contextMenu.Item({
 		label: "English",
-		data: 'en'
+		data: 'en',
+		context: kontext
 	}),
 	malayalam = contextMenu.Item({
 		label: "Malayalam",
-		data: 'ml'
+		data: 'ml',
+		context: kontext
 	});
 	var searchMenu = contextMenu.Menu({
 		label: "Varnam",
@@ -44,7 +46,6 @@ function createContextMenu(kontext) {
 		contentScriptWhen: 'ready',
 		contentScript: "self.on('click', function(node, data) {self.postMessage({'data': data, 'id': node.id});});",
 		items: [english, malayalam],
-		attachTo: ["existing", "top"],
 		onMessage: function(data) {
 			var worker = getActiveWorker();
 			if (worker) {
@@ -101,8 +102,9 @@ function getActiveWorker() {
 var searchMenu = createContextMenu(contextMenu.SelectorContext("textarea, input"));
 
 var addontab = require("addon-page");
-exports.main = function (options, callbacks) {
-    if (options.loadReason == 'install') {
-        require("tabs").open(data.url("howto.html"));
-    }
+exports.main = function(options, callbacks) {
+	if (options.loadReason == 'install') {
+		require("tabs").open(data.url("howto.html"));
+	}
 };
+
