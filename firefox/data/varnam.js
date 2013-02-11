@@ -154,11 +154,20 @@ function positionPopup(editor) {
 			topPos = topPos - $(suggestionDiv).height() - 40;
 		}
 
+        var viewportWidth = $(window).width();
+        var calculatedLeft = rect.left + scrollLeft + pos.left; 
+        var suggestionDivsRight = calculatedLeft + $(suggestionDiv).width();
+        if (suggestionDivsRight > viewportWidth) {
+            // Right side of suggestion list is going off the screen
+            var diff = suggestionDivsRight - viewportWidth;
+            calculatedLeft = calculatedLeft - diff - 10; 
+        }
+
 		$(suggestionDiv).css({
 			display: 'block',
 			position: 'absolute',
 			top: topPos + scrollTop + 'px',
-			left: rect.left + scrollLeft + pos.left + 'px',
+			left: calculatedLeft + 'px',
 			'z-index': '25000'
 		});
 	}
