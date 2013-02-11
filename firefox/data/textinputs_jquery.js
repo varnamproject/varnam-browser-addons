@@ -1,20 +1,264 @@
-/*
- Rangy Text Inputs, a cross-browser textarea and text input library plug-in for jQuery.
+/**
+ * @license Rangy Text Inputs, a cross-browser textarea and text input library plug-in for jQuery.
+ * http://code.google.com/p/rangyinputs/
+ *
+ * Depends on jQuery 1.0 or later.
+ *
+ * Related project: Rangy, a cross-browser JavaScript range and selection library
+ * http://code.google.com/p/rangyinputs/
+ *
+ * Copyright %%build:year%%, Tim Down
+ * Licensed under the MIT license.
+ * Version: %%build:version%%
+ * Build date: %%build:date%%
+ */
+(function($) {
+	var UNDEF = "undefined";
+	var getSelection, setSelection, deleteSelectedText, deleteText, insertText;
+	var replaceSelectedText, surroundSelectedText, extractSelectedText, collapseSelection;
 
- Part of Rangy, a cross-browser JavaScript range and selection library
- http://code.google.com/p/rangy/
+	// Trio of isHost* functions taken from Peter Michaux's article:
+	// http://peter.michaux.ca/articles/feature-detection-state-of-the-art-browser-scripting
+	function isHostMethod(object, property) {
+		var t = typeof object[property];
+		return t === "function" || ( !! (t == "object" && object[property])) || t == "unknown";
+	}
 
- Depends on jQuery 1.0 or later.
+	function isHostProperty(object, property) {
+		return typeof(object[property]) != UNDEF;
+	}
 
- Copyright 2010, Tim Down
- Licensed under the MIT license.
- Version: 0.1.205
- Build date: 5 November 2010
-*/
-(function(n){function o(e,g){var a=typeof e[g];return a==="function"||!!(a=="object"&&e[g])||a=="unknown"}function p(e,g,a){if(g<0)g+=e.value.length;if(typeof a=="undefined")a=g;if(a<0)a+=e.value.length;return{start:g,end:a}}function k(){return typeof document.body=="object"&&document.body?document.body:document.getElementsByTagName("body")[0]}var i,h,q,l,r,s,t,u,m;n(document).ready(function(){function e(a,b){return function(){var c=this.jquery?this[0]:this,d=c.nodeName.toLowerCase();if(c.nodeType==
-1&&(d=="textarea"||d=="input"&&c.type=="text")){c=[c].concat(Array.prototype.slice.call(arguments));c=a.apply(this,c);if(!b)return c}if(b)return this}}var g=document.createElement("textarea");k().appendChild(g);if(typeof g.selectionStart!="undefined"&&typeof g.selectionEnd!="undefined"){i=function(a){return{start:a.selectionStart,end:a.selectionEnd,length:a.selectionEnd-a.selectionStart,text:a.value.slice(a.selectionStart,a.selectionEnd)}};h=function(a,b,c){b=p(a,b,c);a.selectionStart=b.start;a.selectionEnd=
-b.end};m=function(a,b){if(b)a.selectionEnd=a.selectionStart;else a.selectionStart=a.selectionEnd}}else if(o(g,"createTextRange")&&typeof document.selection=="object"&&document.selection&&o(document.selection,"createRange")){i=function(a){var b=0,c=0,d,f,j;if((j=document.selection.createRange())&&j.parentElement()==a){f=a.value.length;d=a.value.replace(/\r\n/g,"\n");c=a.createTextRange();c.moveToBookmark(j.getBookmark());j=a.createTextRange();j.collapse(false);if(c.compareEndPoints("StartToEnd",j)>
--1)b=c=f;else{b=-c.moveStart("character",-f);b+=d.slice(0,b).split("\n").length-1;if(c.compareEndPoints("EndToEnd",j)>-1)c=f;else{c=-c.moveEnd("character",-f);c+=d.slice(0,c).split("\n").length-1}}}return{start:b,end:c,length:c-b,text:a.value.slice(b,c)}};h=function(a,b,c){b=p(a,b,c);c=a.createTextRange();var d=b.start-(a.value.slice(0,b.start).split("\r\n").length-1);c.collapse(true);if(b.start==b.end)c.move("character",d);else{c.moveEnd("character",b.end-(a.value.slice(0,b.end).split("\r\n").length-
-1));c.moveStart("character",d)}c.select()};m=function(a,b){var c=document.selection.createRange();c.collapse(b);c.select()}}else{k().removeChild(g);window.console&&window.console.log&&window.console.log("TextInputs module for Rangy not supported in your browser. Reason: No means of finding text input caret position");return}k().removeChild(g);l=function(a,b,c,d){var f;if(b!=c){f=a.value;a.value=f.slice(0,b)+f.slice(c)}d&&h(a,b,b)};q=function(a){var b=i(a);l(a,b.start,b.end,true)};u=function(a){var b=
-i(a),c;if(b.start!=b.end){c=a.value;a.value=c.slice(0,b.start)+c.slice(b.end)}h(a,b.start,b.start);return b.text};r=function(a,b,c,d){var f=a.value;a.value=f.slice(0,c)+b+f.slice(c);if(d){b=c+b.length;h(a,b,b)}};s=function(a,b){var c=i(a),d=a.value;a.value=d.slice(0,c.start)+b+d.slice(c.end);c=c.start+b.length;h(a,c,c)};t=function(a,b,c){var d=i(a),f=a.value;a.value=f.slice(0,d.start)+b+d.text+c+f.slice(d.end);b=d.start+b.length;h(a,b,b+d.length)};n.fn.extend({getSelection:e(i,false),setSelection:e(h,
-true),collapseSelection:e(m,true),deleteSelectedText:e(q,true),deleteText:e(l,true),extractSelectedText:e(u,false),insertText:e(r,true),replaceSelectedText:e(s,true),surroundSelectedText:e(t,true)})})})(jQuery);
+	function isHostObject(object, property) {
+		return !! (typeof(object[property]) == "object" && object[property]);
+	}
+
+	function fail(reason) {
+		if (window.console && window.console.log) {
+			window.console.log("RangyInputs not supported in your browser. Reason: " + reason);
+		}
+	}
+
+	function adjustOffsets(el, start, end) {
+		if (start < 0) {
+			start += el.value.length;
+		}
+		if (typeof end == UNDEF) {
+			end = start;
+		}
+		if (end < 0) {
+			end += el.value.length;
+		}
+		return {
+			start: start,
+			end: end
+		};
+	}
+
+	function makeSelection(el, start, end) {
+		return {
+			start: start,
+			end: end,
+			length: end - start,
+			text: el.value.slice(start, end)
+		};
+	}
+
+	function getBody() {
+		return isHostObject(document, "body") ? document.body: document.getElementsByTagName("body")[0];
+	}
+
+	$(document).ready(function() {
+		var testTextArea = document.createElement("textarea");
+
+		getBody().appendChild(testTextArea);
+
+		if (isHostProperty(testTextArea, "selectionStart") && isHostProperty(testTextArea, "selectionEnd")) {
+			getSelection = function(el) {
+				var start = el.selectionStart,
+				end = el.selectionEnd;
+				return makeSelection(el, start, end);
+			};
+
+			setSelection = function(el, startOffset, endOffset) {
+				var offsets = adjustOffsets(el, startOffset, endOffset);
+				el.selectionStart = offsets.start;
+				el.selectionEnd = offsets.end;
+			};
+
+			collapseSelection = function(el, toStart) {
+				if (toStart) {
+					el.selectionEnd = el.selectionStart;
+				} else {
+					el.selectionStart = el.selectionEnd;
+				}
+			};
+		} else if (isHostMethod(testTextArea, "createTextRange") && isHostObject(document, "selection") && isHostMethod(document.selection, "createRange")) {
+
+			getSelection = function(el) {
+				var start = 0,
+				end = 0,
+				normalizedValue, textInputRange, len, endRange;
+				var range = document.selection.createRange();
+
+				if (range && range.parentElement() == el) {
+					len = el.value.length;
+
+					normalizedValue = el.value.replace(/\r\n/g, "\n");
+					textInputRange = el.createTextRange();
+					textInputRange.moveToBookmark(range.getBookmark());
+					endRange = el.createTextRange();
+					endRange.collapse(false);
+					if (textInputRange.compareEndPoints("StartToEnd", endRange) > - 1) {
+						start = end = len;
+					} else {
+						start = - textInputRange.moveStart("character", - len);
+						start += normalizedValue.slice(0, start).split("\n").length - 1;
+						if (textInputRange.compareEndPoints("EndToEnd", endRange) > - 1) {
+							end = len;
+						} else {
+							end = - textInputRange.moveEnd("character", - len);
+							end += normalizedValue.slice(0, end).split("\n").length - 1;
+						}
+					}
+				}
+
+				return makeSelection(el, start, end);
+			};
+
+			// Moving across a line break only counts as moving one character in a TextRange, whereas a line break in
+			// the textarea value is two characters. This function corrects for that by converting a text offset into a
+			// range character offset by subtracting one character for every line break in the textarea prior to the
+			// offset
+			var offsetToRangeCharacterMove = function(el, offset) {
+				return offset - (el.value.slice(0, offset).split("\r\n").length - 1);
+			};
+
+			setSelection = function(el, startOffset, endOffset) {
+				var offsets = adjustOffsets(el, startOffset, endOffset);
+				var range = el.createTextRange();
+				var startCharMove = offsetToRangeCharacterMove(el, offsets.start);
+				range.collapse(true);
+				if (offsets.start == offsets.end) {
+					range.move("character", startCharMove);
+				} else {
+					range.moveEnd("character", offsetToRangeCharacterMove(el, offsets.end));
+					range.moveStart("character", startCharMove);
+				}
+				range.select();
+			};
+
+			collapseSelection = function(el, toStart) {
+				var range = document.selection.createRange();
+				range.collapse(toStart);
+				range.select();
+			};
+		} else {
+			getBody().removeChild(testTextArea);
+			fail("No means of finding text input caret position");
+			return;
+		}
+
+		// Clean up
+		getBody().removeChild(testTextArea);
+
+		deleteText = function(el, start, end, moveSelection) {
+			var val;
+			if (start != end) {
+				val = el.value;
+				el.value = val.slice(0, start) + val.slice(end);
+			}
+			if (moveSelection) {
+				setSelection(el, start, start);
+			}
+		};
+
+		deleteSelectedText = function(el) {
+			var sel = getSelection(el);
+			deleteText(el, sel.start, sel.end, true);
+		};
+
+		extractSelectedText = function(el) {
+			var sel = getSelection(el),
+			val;
+			if (sel.start != sel.end) {
+				val = el.value;
+				el.value = val.slice(0, sel.start) + val.slice(sel.end);
+			}
+			setSelection(el, sel.start, sel.start);
+			return sel.text;
+		};
+
+		insertText = function(el, text, index, moveSelection) {
+			var val = el.value,
+			caretIndex;
+			el.value = val.slice(0, index) + text + val.slice(index);
+			if (moveSelection) {
+				caretIndex = index + text.length;
+				setSelection(el, caretIndex, caretIndex);
+			}
+		};
+
+		replaceSelectedText = function(el, text) {
+			var sel = getSelection(el),
+			val = el.value;
+			el.value = val.slice(0, sel.start) + text + val.slice(sel.end);
+			var caretIndex = sel.start + text.length;
+			setSelection(el, caretIndex, caretIndex);
+		};
+
+		surroundSelectedText = function(el, before, after) {
+			if (typeof after == UNDEF) {
+				after = before;
+			}
+			var sel = getSelection(el),
+			val = el.value;
+			el.value = val.slice(0, sel.start) + before + sel.text + after + val.slice(sel.end);
+			var startIndex = sel.start + before.length;
+			var endIndex = startIndex + sel.length;
+			setSelection(el, startIndex, endIndex);
+		};
+
+		function jQuerify(func, returnThis) {
+			return function() {
+				var el = this.jquery ? this[0] : this;
+				var nodeName = el.nodeName.toLowerCase();
+
+				if (el.nodeType == 1 && (nodeName == "textarea" || (nodeName == "input" && (el.type == "text" || el.type == 'search')))) {
+					var args = [el].concat(Array.prototype.slice.call(arguments));
+					var result = func.apply(this, args);
+					if (!returnThis) {
+						return result;
+					}
+				}
+				if (returnThis) {
+					return this;
+				}
+			};
+		}
+
+		$.fn.extend({
+			getSelection: jQuerify(getSelection, false),
+			setSelection: jQuerify(setSelection, true),
+			collapseSelection: jQuerify(collapseSelection, true),
+			deleteSelectedText: jQuerify(deleteSelectedText, true),
+			deleteText: jQuerify(deleteText, true),
+			extractSelectedText: jQuerify(extractSelectedText, false),
+			insertText: jQuerify(insertText, true),
+			replaceSelectedText: jQuerify(replaceSelectedText, true),
+			surroundSelectedText: jQuerify(surroundSelectedText, true)
+		});
+
+		$.fn.rangyInputs = {
+			getSelection: getSelection,
+			setSelection: setSelection,
+			collapseSelection: collapseSelection,
+			deleteSelectedText: deleteSelectedText,
+			deleteText: deleteText,
+			extractSelectedText: extractSelectedText,
+			insertText: insertText,
+			replaceSelectedText: replaceSelectedText,
+			surroundSelectedText: surroundSelectedText
+		};
+	});
+})(jQuery);
+
