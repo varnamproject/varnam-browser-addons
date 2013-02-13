@@ -46,6 +46,7 @@ function createContextMenu(kontext) {
 		contentScriptWhen: 'ready',
 		contentScript: "self.on('click', function(node, data) {self.postMessage({'data': data, 'id': node.id});});",
 		items: [english, malayalam],
+        image: data.url('icons/icon.png'),
 		onMessage: function(data) {
 			var worker = getActiveWorker();
 			if (worker) {
