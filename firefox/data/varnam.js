@@ -25,6 +25,7 @@ skipTextChange = false,
 activeElement = null;
 
 self.port.on('initVarnam', initVarnam);
+self.port.on('disableVarnam', disableVarnam);
 self.port.on('showPopup', showPopup);
 
 function findElementById(id) {
@@ -57,6 +58,19 @@ function initVarnam(data) {
 		$(active).on('keydown', hookVarnamIME);
 		$(active).off('keyup', showSuggestions);
 		$(active).on('keyup', showSuggestions);
+	}
+}
+
+function disableVarnam(data) {
+	var active = findElementById(data.id);
+	if (!active) {
+		active = document.activeElement;
+	}
+	if (active != document.body) {
+		$(active).removeData('varnam-lang');
+		$(active).removeData('varnam-input-value');
+		$(active).off('keydown', hookVarnamIME);
+		$(active).off('keyup', showSuggestions);
 	}
 }
 

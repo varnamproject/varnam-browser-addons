@@ -30,11 +30,12 @@ var page = pageMod.PageMod({
 });
 
 function createContextMenu(kontext) {
-	var english = contextMenu.Item({
-		label: "English",
-		data: 'en',
+	var disable = contextMenu.Item({
+		label: "Disable",
+		data: 'disable',
 		context: kontext
 	}),
+	separator = contextMenu.Separator(),
 	malayalam = contextMenu.Item({
 		label: "Malayalam",
 		data: 'ml',
@@ -45,12 +46,17 @@ function createContextMenu(kontext) {
 		context: kontext,
 		contentScriptWhen: 'ready',
 		contentScript: "self.on('click', function(node, data) {self.postMessage({'data': data, 'id': node.id});});",
-		items: [english, malayalam],
-        image: data.url('icons/icon.png'),
+		items: [disable, separator, malayalam],
+		image: data.url('icons/icon.png'),
 		onMessage: function(data) {
 			var worker = getActiveWorker();
 			if (worker) {
-				worker.port.emit('initVarnam', data);
+				if (data.data == 'disable') {
+					worker.port.emit('disableVarnam', data);
+				}
+				else {
+					worker.port.emit('initVarnam', data);
+				}
 			}
 		}
 	});

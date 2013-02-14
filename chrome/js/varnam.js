@@ -5,6 +5,9 @@
 		} else if (request.action == "trans") {
 			displaySugg(request.data);
 		}
+        else if (request.action == 'Disable') {
+            disableVarnam();
+        }
 	});
 
 	function initVarnam(data) {
@@ -17,6 +20,16 @@
 			$(active).on('keydown', hookVarnamIME);
 			$(active).off('keyup', showSuggestions);
 			$(active).on('keyup', showSuggestions);
+		}
+	}
+
+	function disableVarnam() {
+		var active = window.document.activeElement;
+		if (active) {
+			$(active).removeData('varnam-lang');
+			$(active).removeData('varnam-input-value');
+			$(active).off('keydown', hookVarnamIME);
+			$(active).off('keyup', showSuggestions);
 		}
 	}
 
@@ -89,7 +102,7 @@
 		}
 	}
 
-    function getWordBeginingPosition(editor) {
+	function getWordBeginingPosition(editor) {
 		// This is required to set the selection back
 		$(editor).focus();
 		var prev = $(editor).getSelection();
