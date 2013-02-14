@@ -5,9 +5,9 @@
 		} else if (request.action == "trans") {
 			displaySugg(request.data);
 		}
-        else if (request.action == 'Disable') {
-            disableVarnam();
-        }
+		else if (request.action == 'Disable') {
+			disableVarnam();
+		}
 	});
 
 	function initVarnam(data) {
@@ -52,9 +52,10 @@
 		COMMA: 188,
 		LEFT_BRACKET: 57,
 		RIGHT_BRACKET: 48,
+		QUOTE: 222,
 		SEMICOLON: 59
 	},
-	WORD_BREAK_CHARS = [KEYS.ENTER, KEYS.TAB, KEYS.SPACE, KEYS.PERIOD, KEYS.QUESTION, KEYS.EXCLAMATION, KEYS.COMMA, KEYS.LEFT_BRACKET, KEYS.RIGHT_BRACKET, KEYS.SEMICOLON],
+	WORD_BREAK_CHARS = [KEYS.ENTER, KEYS.TAB, KEYS.SPACE, KEYS.PERIOD, KEYS.QUESTION, KEYS.EXCLAMATION, KEYS.COMMA, KEYS.LEFT_BRACKET, KEYS.RIGHT_BRACKET, KEYS.SEMICOLON, KEYS.QUOTE],
 	skipTextChange = false,
 	activeElement = null;
 

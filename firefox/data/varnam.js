@@ -18,9 +18,10 @@ KEYS = {
 	COMMA: 188,
 	LEFT_BRACKET: 57,
 	RIGHT_BRACKET: 48,
+	QUOTE: 222,
 	SEMICOLON: 59
 },
-WORD_BREAK_CHARS = [KEYS.ENTER, KEYS.TAB, KEYS.SPACE, KEYS.PERIOD, KEYS.QUESTION, KEYS.EXCLAMATION, KEYS.COMMA, KEYS.LEFT_BRACKET, KEYS.RIGHT_BRACKET, KEYS.SEMICOLON],
+WORD_BREAK_CHARS = [KEYS.ENTER, KEYS.TAB, KEYS.SPACE, KEYS.PERIOD, KEYS.QUESTION, KEYS.EXCLAMATION, KEYS.COMMA, KEYS.LEFT_BRACKET, KEYS.RIGHT_BRACKET, KEYS.SEMICOLON, KEYS.QUOTE],
 skipTextChange = false,
 activeElement = null;
 
@@ -168,14 +169,14 @@ function positionPopup(editor) {
 			topPos = topPos - $(suggestionDiv).height() - 40;
 		}
 
-        var viewportWidth = $(window).width();
-        var calculatedLeft = rect.left + scrollLeft + pos.left; 
-        var suggestionDivsRight = calculatedLeft + $(suggestionDiv).width();
-        if (suggestionDivsRight > viewportWidth) {
-            // Right side of suggestion list is going off the screen
-            var diff = suggestionDivsRight - viewportWidth;
-            calculatedLeft = calculatedLeft - diff - 10; 
-        }
+		var viewportWidth = $(window).width();
+		var calculatedLeft = rect.left + scrollLeft + pos.left;
+		var suggestionDivsRight = calculatedLeft + $(suggestionDiv).width();
+		if (suggestionDivsRight > viewportWidth) {
+			// Right side of suggestion list is going off the screen
+			var diff = suggestionDivsRight - viewportWidth;
+			calculatedLeft = calculatedLeft - diff - 10;
+		}
 
 		$(suggestionDiv).css({
 			display: 'block',
