@@ -1,11 +1,11 @@
-var data = require("self").data,
-contextMenu = require("context-menu"),
-tabs = require('tabs'),
-request = require("request").Request,
-prefs = require("simple-prefs").prefs,
-contentScripts = [data.url("jquery-1.8.2.min.js"), data.url("textinputs_jquery.js"), data.url("caret.js"), data.url("varnam.js")];
-
-var options = {
+const data = require("self").data;
+const contextMenu = require("context-menu");
+const tabs = require('tabs');
+const request = require("request").Request;
+const prefs = require("simple-prefs").prefs;
+const contentScripts = [
+data.url("jquery-1.8.2.min.js"), data.url("textinputs_jquery.js"), data.url("caret.js"), data.url("varnam.js")];
+const options = {
 	progressImage: data.url('progress.gif')
 };
 
@@ -41,7 +41,7 @@ function createContextMenu(kontext) {
 		data: 'ml',
 		context: kontext
 	});
-	var searchMenu = contextMenu.Menu({
+	var varnamMenu = contextMenu.Menu({
 		label: "Varnam",
 		context: kontext,
 		contentScriptWhen: 'ready',
@@ -60,7 +60,7 @@ function createContextMenu(kontext) {
 			}
 		}
 	});
-	return searchMenu;
+	return varnamMenu;
 };
 
 function fetchSuggestions(data) {
