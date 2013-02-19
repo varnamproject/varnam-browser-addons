@@ -28,6 +28,11 @@ activeElement = null;
 self.port.on('initVarnam', initVarnam);
 self.port.on('disableVarnam', disableVarnam);
 self.port.on('showPopup', showPopup);
+self.port.on('failedEnable', failedEnable);
+
+function failedEnable() {
+	alert("Default language is not set. Please click on the language name or set a default language from preferences before enabling varnam");
+}
 
 function findElementById(id) {
 	var element = document.getElementById(id);
@@ -50,10 +55,15 @@ function initVarnam(data) {
 	var active = findElementById(data.id);
 	if (!active) {
 		active = document.activeElement;
+		if (active.localName != 'textarea' && active.localName != 'input') {
+			console.log('Unable to init varnam. Varnam can be initialized only on a textarea and input');
+			return;
+		}
 	}
+
 	if (active != document.body) {
-		$(active).data('varnam-lang', data.data);
-		$(active).data('varnam-input-value', active.value);
+		active.setAttribute('data-varnam-lang', data.data);
+		active.setAttribute('data-varnam-input-value', active.value);
 
 		$(active).off('keydown', hookVarnamIME);
 		$(active).on('keydown', hookVarnamIME);
@@ -68,8 +78,8 @@ function disableVarnam(data) {
 		active = document.activeElement;
 	}
 	if (active != document.body) {
-		$(active).removeData('varnam-lang');
-		$(active).removeData('varnam-input-value');
+		active.removeAttribute('data-varnam-lang');
+		active.removeAttribute('data-varnam-input-value');
 		$(active).off('keydown', hookVarnamIME);
 		$(active).off('keyup', showSuggestions);
 	}
@@ -105,14 +115,15 @@ function hookVarnamIME(e) {
 	}
 }
 
+function getCurrentLanguage() {
+	var lang = document.activeElement.getAttribute('data-varnam-lang');
+	return lang;
+}
+
 function showSuggestions() {
 	var wordUnderCaret = getWordUnderCaret(document.activeElement);
 
-	var lang = $(document.activeElement).data('varnam-lang');
-	if (lang == 'en') {
-		return;
-	}
-
+	var lang = getCurrentLanguage();
 	if ($.trim(wordUnderCaret.word) != '') {
 		if (hasTextChanged() && ! skipTextChange) {
 
@@ -120,7 +131,7 @@ function showSuggestions() {
 
 			// Fetch suggestions from server
 			self.port.emit("fetchSuggestions", {
-				lang: $(document.activeElement).data('varnam-lang'),
+				lang: lang,
 				word: wordUnderCaret.word
 			});
 		}
@@ -273,8 +284,9 @@ function replaceWordUnderCaret(text) {
 }
 
 function learnWord(text) {
+	var lang = getCurrentLanguage();
 	self.port.emit("learnWord", {
-		lang: $(document.activeElement).data('varnam-lang'),
+		lang: lang,
 		word: text
 	});
 }
@@ -315,10 +327,10 @@ function handleSelectionOnSuggestionList(event) {
 
 function hasTextChanged() {
 	var active = document.activeElement;
-	var oldValue = $(active).data('varnam-input-value');
+	var oldValue = active.getAttribute('data-varnam-input-value');
 	var newValue = $(active).val();
 	if (oldValue != newValue) {
-		$(active).data('varnam-input-value', active.value);
+		active.setAttribute('data-varnam-input-value', active.value);
 		return true;
 	}
 	return false;

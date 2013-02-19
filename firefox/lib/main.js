@@ -3,8 +3,12 @@ const contextMenu = require("context-menu");
 const tabs = require('tabs');
 const request = require("request").Request;
 const prefs = require("simple-prefs").prefs;
-const contentScripts = [
-data.url("jquery-1.8.2.min.js"), data.url("textinputs_jquery.js"), data.url("caret.js"), data.url("varnam.js")];
+const {
+	Hotkey
+} = require("sdk/hotkeys");
+const contentScripts = [data.url("jquery-1.8.2.min.js"), data.url("textinputs_jquery.js"), data.url("caret.js"), data.url("varnam.js")];
+
+// Options which are available to content script
 const options = {
 	progressImage: data.url('progress.gif')
 };
@@ -30,10 +34,16 @@ var page = pageMod.PageMod({
 });
 
 function createContextMenu(kontext) {
-	var disable = contextMenu.Item({
-		label: "Disable",
-		data: 'disable',
-		context: kontext
+	var enableOrDisable = contextMenu.Item({
+		label: "Enable",
+		data: 'enable',
+		contentScriptFile: [data.url('enable_disable.js')],
+		context: kontext,
+		onMessage: function(data) {
+			if (data.kind == 'context') {
+				this.data = data.data;
+			}
+		}
 	}),
 	separator = contextMenu.Separator(),
 	malayalam = contextMenu.Item({
@@ -45,19 +55,35 @@ function createContextMenu(kontext) {
 		label: "Varnam",
 		context: kontext,
 		contentScriptWhen: 'ready',
-		contentScript: "self.on('click', function(node, data) {self.postMessage({'data': data, 'id': node.id});});",
-		items: [disable, separator, malayalam],
+		contentScriptFile: [data.url('context_menu.js')],
+		items: [enableOrDisable, separator, malayalam],
 		image: data.url('icons/icon.png'),
 		onMessage: function(data) {
+			// This will be called when any item in the menu gets a click
 			var worker = getActiveWorker();
-			if (worker) {
-				if (data.data == 'disable') {
-					worker.port.emit('disableVarnam', data);
-				}
-				else {
-					worker.port.emit('initVarnam', data);
+			if (!worker) {
+				return;
+			}
+
+			var action = 'initVarnam';
+			if (data.data == 'disable') {
+				action = 'disableVarnam';
+			}
+			else if (data.data == 'enable') {
+				// We are enabling varnam without saying which language to use. So just using the preferred one
+				data.data = prefs.language;
+				if (data.data == 'none') {
+					action = 'failedEnable';
 				}
 			}
+			else {
+				// If no default language is set, setting current one as the default language
+				if (prefs.language == 'none') {
+					prefs.language = data.data;
+				}
+			}
+			worker.port.emit(action, data);
+
 		}
 	});
 	return varnamMenu;
@@ -107,6 +133,21 @@ function getActiveWorker() {
 }
 
 var searchMenu = createContextMenu(contextMenu.SelectorContext("textarea, input"));
+
+var enableHotKey = Hotkey({
+	combo: "accel-shift-v",
+	onPress: function() {
+		var worker = getActiveWorker();
+		if (!worker) {
+			return;
+		}
+
+		worker.port.emit('initVarnam', {
+			data: prefs.language,
+			id: ''
+		});
+	}
+});
 
 var addontab = require("addon-page");
 exports.main = function(options, callbacks) {
