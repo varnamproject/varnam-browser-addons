@@ -28,11 +28,6 @@ activeElement = null;
 self.port.on('initVarnam', initVarnam);
 self.port.on('disableVarnam', disableVarnam);
 self.port.on('showPopup', showPopup);
-self.port.on('failedEnable', failedEnable);
-
-function failedEnable() {
-	alert("Default language is not set. Please click on the language name or set a default language from preferences before enabling varnam");
-}
 
 function findElementById(id) {
 	var element = document.getElementById(id);

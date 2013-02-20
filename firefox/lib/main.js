@@ -3,9 +3,10 @@ const contextMenu = require("context-menu");
 const tabs = require('tabs');
 const request = require("request").Request;
 const prefs = require("simple-prefs").prefs;
-const {
-	Hotkey
-} = require("sdk/hotkeys");
+const notifications = require("sdk/notifications");
+const Hotkey = require("sdk/hotkeys").Hotkey;
+
+// Content scripts that page mod uses
 const contentScripts = [data.url("jquery-1.8.2.min.js"), data.url("textinputs_jquery.js"), data.url("caret.js"), data.url("varnam.js")];
 
 // Options which are available to content script
@@ -73,7 +74,9 @@ function createContextMenu(kontext) {
 				// We are enabling varnam without saying which language to use. So just using the preferred one
 				data.data = prefs.language;
 				if (data.data == 'none') {
-					action = 'failedEnable';
+                    // No preferred language available.
+                    notifyUser("Error while enabling varnam. Default language is not set. Please click on the language name or set a default language from preferences screen before enabling varnam");
+                    return;
 				}
 			}
 			else {
@@ -148,6 +151,13 @@ var enableHotKey = Hotkey({
 		});
 	}
 });
+
+function notifyUser(message) {
+	notifications.notify({
+		title: "Varnam",
+		text: message
+	});
+}
 
 var addontab = require("addon-page");
 exports.main = function(options, callbacks) {
