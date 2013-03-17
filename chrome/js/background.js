@@ -2,18 +2,23 @@ var varnamMenu = chrome.contextMenus.create({
 	"title": "Varnam",
 	"contexts": ["editable"]
 });
-var disable = chrome.contextMenus.create({
-	"title": "Disable",
+
+var disableOrEnable = chrome.contextMenus.create({
+	"type": "checkbox",
+	"title": "Enable",
 	"parentId": varnamMenu,
 	"id": "varnam_disable",
+	"checked": true,
 	"contexts": ["editable"],
-	"onclick": disableVarnam
+	"onclick": disableOrEnableVarnam
 });
+
 var separator = chrome.contextMenus.create({
 	type: "separator",
 	parentId: varnamMenu,
 	contexts: ["editable"]
 });
+
 var malayalam = chrome.contextMenus.create({
 	"title": "Malayalam",
 	"parentId": varnamMenu,
@@ -24,15 +29,21 @@ var malayalam = chrome.contextMenus.create({
 
 function handleLanguageSelection(info, tab) {
 	var lang = info.menuItemId.replace("varnam_", "");
+  default_language=localStorage["default_language"];
+  if(!default_language || default_language == ''){
+    localStorage["default_language"]=lang;
+  }
 	chrome.tabs.sendMessage(tab.id, {
 		action: "LanguageSelect",
 		language: lang
 	});
 }
 
-function disableVarnam(info, tab) {
+function disableOrEnableVarnam(info, tab) {
 	chrome.tabs.sendMessage(tab.id, {
-		action: "Disable"
+		action: "VarnamEnable",
+		enable: info.checked,
+    language: localStorage["default_language"]
 	});
 }
 
@@ -68,6 +79,14 @@ function(request, sender, sendResponse) {
 	case 'learnWord':
 		learnWord(request);
 		break;
+  case 'contextMenu':
+    chrome.contextMenus.update(
+    disableOrEnable,
+    {
+      type: 'checkbox',
+      checked: request.text === 'true'
+    });
+    break;
 	}
 });
 

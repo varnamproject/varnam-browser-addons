@@ -1,14 +1,40 @@
 (function() {
+  var isHovering=false;
 	chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 		if (request.action == "LanguageSelect") {
 			initVarnam(request.language);
 		} else if (request.action == "trans") {
 			displaySugg(request.data);
 		}
-		else if (request.action == 'Disable') {
-			disableVarnam();
+		else if (request.action == 'VarnamEnable') {
+      if(!request.enable){
+			  disableVarnam();
+      }else{
+        if(!request.language || request.Language == ''){
+          alert('Please specify default language in varnam options.');
+          return;
+        }
+        initVarnam(request.language);
+      }
 		}
 	});
+
+  function listenDocumentEvents() {
+    window.document.addEventListener('mouseover', function(e) {
+          var event = $.event.fix(e);
+          activeElement = event.target;
+          var lang = $(activeElement).data('varnam-lang');
+          if (!lang || lang == 'en' || lang == '') {
+            chrome.extension.sendMessage({
+              action: "contextMenu",
+              text: "false"});
+          }else{
+            chrome.extension.sendMessage({
+              action: "contextMenu",
+              text: "true"});
+          }
+      });
+  }
 
 	function initVarnam(data) {
 		var active = window.document.activeElement;
@@ -327,5 +353,6 @@
 			word: editor.value.substring(startAt, endsAt)
 		};
 	}
+  listenDocumentEvents();
 })();
 
