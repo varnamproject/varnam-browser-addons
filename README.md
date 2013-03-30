@@ -1,6 +1,10 @@
 # Welcome
 
-Varnam browser addons contains [libvarnam](https://github.com/navaneeth/libvarnam) client for Firefox and Google Chrome. This allows indic input on any text field in any websites.
+Varnam browser addons contains [libvarnam](https://github.com/navaneeth/libvarnam) clients for Firefox and Google Chrome. This allows indic input on any text field in any websites.
+
+# News
+
+* Feb 14, 2013 - Initial release
 
 # Download
 
@@ -21,16 +25,19 @@ To activate varnam, click on the textbox, right click and choose the required la
 
 # Known issues
 
-* Firefox extension will not work on Gmail chat when the chat window is popped out. [#15](https://github.com/navaneeth/varnam-browser-addons/issues/15)
 * Both addons won't work on Gmail compose box.
-* Both addons won't work on Wikipedia's search box. [#1](https://github.com/navaneeth/varnam-browser-addons/issues/1) &amp; [#5](https://github.com/navaneeth/varnam-browser-addons/issues/5)
+
 
 # Authors
 
-Jijesh Mohan - Chrome addon
+Jijesh Mohan - Chrome addon  
 Navaneeth.K.N - Firefox addon
 
-# Discussions
+# More details
 
-Email - varnamproject@googlegroups.com
-IRC @ freenode - #varnamproject
+<table>
+<tr><td>libvarnam</td><td><a href="https://github.com/navaneeth/libvarnam">https://github.com/navaneeth/libvarnam</a></td></tr>
+<tr><td>Website</td><td><a href="http://www.varnamproject.com">http://www.varnamproject.com</a></td></tr>
+<tr><td>Email</td><td>varnamproject@googlegroups.com</td></tr>
+<tr><td>IRC</td><td>#varnamproject</td></tr>
+</table>
