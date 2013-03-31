@@ -60,12 +60,6 @@ function createContextMenu(kontext) {
 		items: [enableOrDisable, separator, malayalam],
 		image: data.url('icons/icon.png'),
 		onMessage: function(data) {
-			// This will be called when any item in the menu gets a click
-			var worker = getActiveWorker();
-			if (!worker) {
-				return;
-			}
-
 			var action = 'initVarnam';
 			if (data.data == 'disable') {
 				action = 'disableVarnam';
@@ -73,7 +67,7 @@ function createContextMenu(kontext) {
 			else if (data.data == 'enable') {
 				// We are enabling varnam without saying which language to use. So just using the preferred one
 				data.data = prefs.language;
-				if (data.data == 'none') {
+				if (data.data === null || data.data == '' || data.data == 'none') {
                     // No preferred language available.
                     notifyUser("Error while enabling varnam. Default language is not set. Please click on the language name or set a default language from preferences screen before enabling varnam");
                     return;
@@ -85,7 +79,8 @@ function createContextMenu(kontext) {
 					prefs.language = data.data;
 				}
 			}
-			worker.port.emit(action, data);
+
+			emitSafely(action, data);
 
 		}
 	});
@@ -103,10 +98,7 @@ function fetchSuggestions(data) {
 			lang: data.lang
 		},
 		onComplete: function(response) {
-			var worker = getActiveWorker();
-			if (worker) {
-				worker.port.emit('showPopup', response.json);
-			}
+            emitSafely('showPopup', response.json);
 		}
 	});
 	suggestionsRequest.get();
@@ -140,12 +132,7 @@ var searchMenu = createContextMenu(contextMenu.SelectorContext("textarea, input"
 var enableHotKey = Hotkey({
 	combo: "accel-shift-v",
 	onPress: function() {
-		var worker = getActiveWorker();
-		if (!worker) {
-			return;
-		}
-
-		worker.port.emit('initVarnam', {
+		emitSafely('initVarnam', {
 			data: prefs.language,
 			id: ''
 		});
@@ -157,6 +144,19 @@ function notifyUser(message) {
 		title: "Varnam",
 		text: message
 	});
+}
+
+function emitSafely(funcName, payload) {
+    try {
+        var worker = getActiveWorker();
+        if (worker) {
+            worker.port.emit(funcName, payload);
+        }
+    }
+    catch(e) {
+        // Ignoring exceptions because SDK may throw error if user accidently moved away from the current page
+        // where page-mod is registered
+    }
 }
 
 var addontab = require("addon-page");

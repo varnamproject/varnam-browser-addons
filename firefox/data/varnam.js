@@ -148,6 +148,10 @@ function showProgress() {
 }
 
 function showPopup(data) {
+    if (!data) {
+        return;
+    }
+
 	var active = document.activeElement;
 	if (active != undefined && active != document.body) {
 		var wordUnderCaret = getWordUnderCaret(active);
