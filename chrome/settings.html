@@ -5,12 +5,26 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   </head>
   <style>
-    .container{
-      width:1024px;
-      margin:0 auto;
+      body {
+      font-family: ProximaNova, Helvetica, Arial, "Lucida Grande", sans-serif;
+      background-color: #f0f0f0;
+      font-size: 14px;
     }
-    h2{
-      margin-bottom:1px;
+
+    h2 {
+      font-size: 30px;
+      margin-bottom: 1px;
+    }
+    h3 {
+      margin-top:1px;
+      font-size: 20px;
+      margin-left:10px;
+    }
+    .container{
+      width: 650px;
+      margin: 0px auto;
+      padding: 20px;
+      color: #383838;
     }
     .small{
       padding-left: 5px;
@@ -20,22 +34,44 @@
     header{
       margin-bottom: 20px;
     }
-    .options{
-      padding:5px;
-    }
+  #content {
+    background-color: #fff;
+    border: 1px solid #cacaca;
+    padding: 30px 46px;
+
+    box-shadow: 0px 1px 0px #fff;
+    -webkit-box-shadow: 0px 1px 0px #fff;
+    -mozbox-shadow: 0px 1px 0px #fff;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -border-radius: 5px;
+  }
+
+ label{
+  display: inline-block;
+  width:300px;
+ }
+
+  #content h4{
+    color: #777777;
+    font-size: 15pt;
+    margin:0 5px 10px 0;
+  }
+
   </style>
   <body>
     <div class="container">
       <header>
-        <h2>Varnam - Transliteration based input tool for indian languages.</h2>
+        <h2>Varnam </h2>
         <span class='small'>by Jijesh Mohan(jijeshmohan@gmail.com)</span>
       </header>
-      <div class="options">
-      <label>Default Language:</label>
-      <select id="language">
-       <option value="">Choose one...</option>
-       <option value="ml">Malayalam</option>
-      </select>
+      <div id="content">
+        <h4>Settings</h4>
+        <label>Default Language:</label>
+        <select id="language">
+         <option value="">Choose one...</option>
+         <option value="ml">Malayalam</option>
+        </select>
       </div>
     </div>
   <script src="settings.js"></script>
