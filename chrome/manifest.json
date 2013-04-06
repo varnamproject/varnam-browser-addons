@@ -1,6 +1,6 @@
 {
     "name": "Varnam",
-    "version": "1.2",
+    "version": "2.0",
     "manifest_version": 2,
     "description": "Varnam is a transliteration based input system for indian languages. Varnam enables indic input on all the webpages",
     "homepage_url": "http://www.varnamproject.com/",
