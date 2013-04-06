@@ -28,6 +28,7 @@ activeElement = null;
 self.port.on('initVarnam', initVarnam);
 self.port.on('disableVarnam', disableVarnam);
 self.port.on('showPopup', showPopup);
+self.port.on('enableOrDisable', enableOrDisable);
 
 function findElementById(id) {
 	var element = document.getElementById(id);
@@ -160,6 +161,19 @@ function showPopup(data) {
 			positionPopup(active);
 		}
 	}
+}
+
+function enableOrDisable(data) {
+    var isVarnamEnabled = (getCurrentLanguage() !== null);
+    var data = {};
+    if (isVarnamEnabled) {
+        data = {data: 'disable', id: document.activeElement.id}
+    }
+    else {
+        data = {data: 'enable', id: document.activeElement.id}
+    }
+
+    self.port.emit("enableOrDisableVarnam", data);
 }
 
 function hidePopup() {

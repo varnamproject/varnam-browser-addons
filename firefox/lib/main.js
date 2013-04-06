@@ -31,6 +31,7 @@ var page = pageMod.PageMod({
 		});
 		worker.port.on("fetchSuggestions", fetchSuggestions);
 		worker.port.on("learnWord", learnWord);
+		worker.port.on("enableOrDisableVarnam", enableOrDisableVarnam);
 	}
 });
 
@@ -60,32 +61,36 @@ function createContextMenu(kontext) {
 		items: [enableOrDisable, separator, malayalam],
 		image: data.url('icons/icon.png'),
 		onMessage: function(data) {
-			var action = 'initVarnam';
-			if (data.data == 'disable') {
-				action = 'disableVarnam';
-			}
-			else if (data.data == 'enable') {
-				// We are enabling varnam without saying which language to use. So just using the preferred one
-				data.data = prefs.language;
-				if (data.data === null || data.data == '' || data.data == 'none') {
-                    // No preferred language available.
-                    notifyUser("Error while enabling varnam. Default language is not set. Please click on the language name or set a default language from preferences screen before enabling varnam");
-                    return;
-				}
-			}
-			else {
-				// If no default language is set, setting current one as the default language
-				if (prefs.language == 'none') {
-					prefs.language = data.data;
-				}
-			}
-
-			emitSafely(action, data);
-
+            enableOrDisableVarnam (data);
 		}
 	});
+
 	return varnamMenu;
 };
+
+function enableOrDisableVarnam(options) {
+    var action = 'initVarnam';
+    if (options.data == 'disable') {
+        action = 'disableVarnam';
+    }
+    else if (options.data == 'enable') {
+        // We are enabling varnam without saying which language to use. So just using the preferred one
+        options.data = prefs.language;
+        if (options.data === null || options.data == '' || options.data == 'none') {
+            // No preferred language available.
+            notifyUser("Error while enabling varnam. Default language is not set. Please click on the language name or set a default language from preferences screen (Tools -> Add-ons -> Extensions -> Preferences) before enabling varnam");
+            return;
+        }
+    }
+    else {
+        // If no default language is set, setting current one as the default language
+        if (prefs.language == 'none') {
+            prefs.language = options.data;
+        }
+    }
+
+    emitSafely(action, options);
+}
 
 function fetchSuggestions(data) {
 	var suggestionsRequest = request({
@@ -132,10 +137,9 @@ var searchMenu = createContextMenu(contextMenu.SelectorContext("textarea, input"
 var enableHotKey = Hotkey({
 	combo: "accel-shift-v",
 	onPress: function() {
-		emitSafely('initVarnam', {
-			data: prefs.language,
-			id: ''
-		});
+        // This is a toggle hotkey. If varnam is enable, this will disable else it will be enabled
+        // This sends a enableOrDisable message
+        emitSafely('enableOrDisable', {});
 	}
 });
 
