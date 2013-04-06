@@ -11,7 +11,7 @@
 			  disableVarnam();
       }else{
         if(!request.language || request.Language == ''){
-          alert('Please specify default language in varnam options.');
+            alert("Error while enabling varnam. Default language is not set. Click on the language name or set a default language from the preferences screen (Menu -> Settings -> Extensions -> Varnam -> Options) before enabling varnam");
           return;
         }
         initVarnam(request.language);

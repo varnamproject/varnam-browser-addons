@@ -78,7 +78,7 @@ function enableOrDisableVarnam(options) {
         options.data = prefs.language;
         if (options.data === null || options.data == '' || options.data == 'none') {
             // No preferred language available.
-            notifyUser("Error while enabling varnam. Default language is not set. Please click on the language name or set a default language from preferences screen (Tools -> Add-ons -> Extensions -> Preferences) before enabling varnam");
+            notifyUser("Error while enabling varnam. Default language is not set. Click on the language name or set a default language from the preferences screen (Tools -> Add-ons -> Extensions -> Preferences) before enabling varnam");
             return;
         }
     }
