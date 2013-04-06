@@ -12,7 +12,7 @@
         "name": "language",
         "title": "Default language",
         "type": "menulist",
-        "value": "",
+        "value": "none",
         "options": [
             {
                 "value": "none",
