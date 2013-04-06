@@ -8,7 +8,7 @@ Varnam browser addons contains [libvarnam](https://github.com/navaneeth/libvarna
 
 # Download
 
-Chrome Extension : [Download](https://chrome.google.com/webstore/detail/varnam-ime/abcfkeabpcanobhdmcmdabejaamephaf)
+Chrome Extension : [Download](https://chrome.google.com/webstore/detail/varnam/abcfkeabpcanobhdmcmdabejaamephaf)
 Firefox Extension :
 [Download](https://addons.mozilla.org/en-US/firefox/addon/varnam-transliteration-base/)
 
@@ -30,7 +30,7 @@ To activate varnam, click on the textbox, right click and choose the required la
 
 # Authors
 
-Jijesh Mohan - Chrome addon  
+Jijesh Mohan - Chrome addon
 Navaneeth.K.N - Firefox addon
 
 # More details
