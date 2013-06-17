@@ -19,6 +19,14 @@ var separator = chrome.contextMenus.create({
 	contexts: ["editable"]
 });
 
+var hindi = chrome.contextMenus.create({
+	"title": "Hindi",
+	"parentId": varnamMenu,
+	"id": "varnam_hi",
+	"contexts": ["editable"],
+	"onclick": handleLanguageSelection
+});
+
 var malayalam = chrome.contextMenus.create({
 	"title": "Malayalam",
 	"parentId": varnamMenu,
