@@ -48,6 +48,11 @@ function createContextMenu(kontext) {
 		}
 	}),
 	separator = contextMenu.Separator(),
+	hindi = contextMenu.Item({
+		label: "Hindi",
+		data: 'hi',
+		context: kontext
+	});
 	malayalam = contextMenu.Item({
 		label: "Malayalam",
 		data: 'ml',
@@ -58,7 +63,7 @@ function createContextMenu(kontext) {
 		context: kontext,
 		contentScriptWhen: 'ready',
 		contentScriptFile: [data.url('context_menu.js')],
-		items: [enableOrDisable, separator, malayalam],
+		items: [enableOrDisable, separator, hindi, malayalam],
 		image: data.url('icons/icon.png'),
 		onMessage: function(data) {
             enableOrDisableVarnam (data);
