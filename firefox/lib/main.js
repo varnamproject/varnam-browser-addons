@@ -35,6 +35,8 @@ var page = pageMod.PageMod({
 	}
 });
 
+page.include.add("about:home");
+
 function createContextMenu(kontext) {
 	var enableOrDisable = contextMenu.Item({
 		label: "Enable",
