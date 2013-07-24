@@ -48,11 +48,12 @@ function handleLanguageSelection(info, tab) {
 }
 
 function disableOrEnableVarnam(info, tab) {
-	chrome.tabs.sendMessage(tab.id, {
-		action: "VarnamEnable",
-		enable: info.checked,
-    language: localStorage["default_language"]
-	});
+    chrome.tabs.sendMessage(tab.id, {
+	action: "VarnamEnable",
+	enable: info.checked,
+        language: localStorage["default_language"],
+        server: varnamServer()
+    });
 }
 
 function fetchSuggestions(url) {
@@ -71,8 +72,29 @@ function fetchSuggestions(url) {
 	xhr.send();
 }
 
+function varnamServer() {
+    var serverInStorage = localStorage['varnam_server'];
+    if(validUrl(serverInStorage)) {
+        return serverInStorage;
+    } else {
+        return defaultVarnamServer();
+    }
+}
+
+function defaultVarnamServer() {
+  return "http://varnamproject.com";
+}
+
+function validUrl(urlLikeString) {
+    return /((http|https):\/\/(\w+:{0,1}\w*@)?(\S+)|)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/.test(urlLikeString);
+}
+
+function varnamLearnUrl() {
+    return varnamServer().concat('/learn');
+}
+
 function learnWord(data) {
-	var vurl = 'http://www.varnamproject.com/learn';
+	var vurl = varnamLearnUrl();
 	var xhr = new XMLHttpRequest();
 	xhr.open("POST", vurl, true);
 	xhr.send(data.params);
@@ -97,4 +119,3 @@ function(request, sender, sendResponse) {
     break;
 	}
 });
-
