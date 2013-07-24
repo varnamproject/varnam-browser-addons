@@ -2,7 +2,7 @@
 	var isHovering=false;
 	chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 		if (request.action == "LanguageSelect") {
-			initVarnam(request.language);
+			initVarnam(request.language, request.server);
 		} else if (request.action == "trans") {
 			displaySugg(request.data);
 		}
@@ -14,7 +14,7 @@
 					alert("Error while enabling varnam. Default language is not set. Click on the language name or set a default language from the preferences screen (Menu -> Settings -> Extensions -> Varnam -> Options) before enabling varnam");
 					return;
 				}
-				initVarnam(request.language);
+				initVarnam(request.language, request.server);
 			}
 		}
 	});
@@ -36,10 +36,11 @@
 		});
 	}
 
-	function initVarnam(data) {
+	function initVarnam(data, server) {
 		var active = window.document.activeElement;
 		if (active) {
 			$(active).data('varnam-lang', data);
+			$(active).data('varnam-server', server);
 			$(active).data('varnam-input-value', active.value);
 
 			$(active).off('keydown', hookVarnamIME);
@@ -53,6 +54,7 @@
 		var active = window.document.activeElement;
 		if (active) {
 			$(active).removeData('varnam-lang');
+			$(active).removeData('varnam-server');
 			$(active).removeData('varnam-input-value');
 			$(active).off('keydown', hookVarnamIME);
 			$(active).off('keyup', showSuggestions);
@@ -261,6 +263,10 @@
 		});
 	}
 
+    function learnUrlFor(server, params) {
+        return server.concat("/tl?").concat(params);
+    }
+
 	function showSuggestions() {
 		var lang = $(document.activeElement).data('varnam-lang');
 		if (lang == 'en') {
@@ -274,7 +280,8 @@
 					'text': wordUnderCaret.word,
 					'lang': $(document.activeElement).data('varnam-lang')
 				};
-				var vurl = 'http://www.varnamproject.com/tl?' + $.param(params);
+		                var server = $(document.activeElement).data('varnam-server');
+				var vurl = learnUrlFor(server, $.param(params));
 				chrome.extension.sendMessage({
 					action: "fetch",
 					"vurl": vurl
