@@ -93,13 +93,34 @@ function enableOrDisableVarnam(options) {
             prefs.language = options.data;
         }
     }
-
     emitSafely(action, options);
+}
+
+function validUrl(urlLikeString) {
+    return /((http|https):\/\/(\w+:{0,1}\w*@)?(\S+)|)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/.test(urlLikeString);
+}
+
+function varnamServer() {
+    var defaultServer = "http://varnamproject.com";
+    var serverFromPrefs = prefs.varnamServer.replace(" ", "");
+    if(validUrl(serverFromPrefs)) {
+        return serverFromPrefs;
+    } else {
+        return defaultServer;
+    }
+}
+
+function fetchUrl() {
+    return varnamServer().concat('/tl');
+}
+
+function learnUrl() {
+    return varnamServer().concat('/learn');
 }
 
 function fetchSuggestions(data) {
 	var suggestionsRequest = request({
-		url: 'http://varnamproject.com/tl',
+		url: fetchUrl(),
 		headers: {
 			Connection: 'keep-alive'
 		},
@@ -116,7 +137,7 @@ function fetchSuggestions(data) {
 
 function learnWord(data) {
 	var learnRequest = request({
-		url: 'http://varnamproject.com/learn',
+		url: learnUrl(),
 		headers: {
 			Connection: 'keep-alive'
 		},
