@@ -1,7 +1,41 @@
-function save_language () {
+function save_options() {
+  saveLanguageConfig();
+  saveServerConfig();
+}
+
+function saveServerConfig() {
+  var serverInput = document.getElementById("server");
+  var server = serverInput.value;
+  if(validUrl(server)) {
+    localStorage["varnam_server"] = server;
+  } else {
+    serverInput.value = defaultVarnamServer();
+    localStorage["varnam_server"] = defaultVarnamServer();
+  }
+}
+
+function saveLanguageConfig () {
   var select = document.getElementById("language");
   var language = select.children[select.selectedIndex].value;
   localStorage["default_language"] = language;
+}
+
+function validUrl(urlLikeString) {
+    return /((http|https):\/\/(\w+:{0,1}\w*@)?(\S+)|)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/.test(urlLikeString);
+}
+
+function defaultVarnamServer() {
+  return "http://varnamproject.com";
+}
+
+function restoreServerConfig() {
+  var serverInput = document.getElementById("server");
+  var varnamServer = localStorage["varnam_server"];
+  if(!varnamServer) {
+      serverInput.value =  defaultVarnamServer();
+  } else {
+      serverInput.value = varnamServer;
+  }
 }
 
 function restore_options () {
@@ -17,6 +51,7 @@ function restore_options () {
       break;
     }
   }
+  restoreServerConfig();
 }
-document.querySelector('#language').addEventListener('change', save_language);
+document.querySelector('#save').addEventListener('click', save_options);
 document.addEventListener('DOMContentLoaded', restore_options);
