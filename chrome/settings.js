@@ -1,4 +1,4 @@
-function save_options() {
+function saveOptions() {
   saveLanguageConfig();
   saveServerConfig();
 }
@@ -38,7 +38,7 @@ function restoreServerConfig() {
   }
 }
 
-function restore_options () {
+function restoreOptions () {
   var language = localStorage["default_language"];
   if (!language) {
     return;
@@ -53,5 +53,5 @@ function restore_options () {
   }
   restoreServerConfig();
 }
-document.querySelector('#save').addEventListener('click', save_options);
-document.addEventListener('DOMContentLoaded', restore_options);
+document.querySelector('#save').addEventListener('click', saveOptions);
+document.addEventListener('DOMContentLoaded', restoreOptions);
