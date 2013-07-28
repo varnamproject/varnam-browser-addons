@@ -103,21 +103,27 @@ function validUrl(urlLikeString) {
 }
 
 function varnamServer() {
-    var defaultServer = "http://varnamproject.com";
+    var defaultServer = "http://www.varnamproject.com/";
     var serverFromPrefs = prefs.varnamServer.replace(" ", "");
     if(validUrl(serverFromPrefs)) {
+        if (!endsWith(serverFromPrefs, "/"))
+            serverFromPrefs += "/";
         return serverFromPrefs;
     } else {
         return defaultServer;
     }
 }
 
+function endsWith(original, suffix) {
+    return original.indexOf(suffix, original.length - suffix.length) !== -1;
+}
+
 function fetchUrl() {
-    return varnamServer().concat('/tl');
+    return varnamServer().concat('tl');
 }
 
 function learnUrl() {
-    return varnamServer().concat('/learn');
+    return varnamServer().concat('learn');
 }
 
 function fetchSuggestions(data) {

@@ -72,9 +72,15 @@ function fetchSuggestions(url) {
 	xhr.send();
 }
 
+function endsWith(original, suffix) {
+    return original.indexOf(suffix, original.length - suffix.length) !== -1;
+}
+
 function varnamServer() {
     var serverInStorage = localStorage['varnam_server'];
     if(validUrl(serverInStorage)) {
+        if (!endsWith(serverInStorage, "/"))
+            serverInStorage += "/";
         return serverInStorage;
     } else {
         return defaultVarnamServer();
@@ -82,7 +88,7 @@ function varnamServer() {
 }
 
 function defaultVarnamServer() {
-  return "http://varnamproject.com";
+  return "http://www.varnamproject.com/";
 }
 
 function validUrl(urlLikeString) {
@@ -90,7 +96,7 @@ function validUrl(urlLikeString) {
 }
 
 function varnamLearnUrl() {
-    return varnamServer().concat('/learn');
+    return varnamServer().concat('learn');
 }
 
 function learnWord(data) {

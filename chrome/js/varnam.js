@@ -264,7 +264,7 @@
 	}
 
     function learnUrlFor(server, params) {
-        return server.concat("/tl?").concat(params);
+        return server.concat("tl?").concat(params);
     }
 
 	function showSuggestions() {
@@ -280,7 +280,7 @@
 					'text': wordUnderCaret.word,
 					'lang': $(document.activeElement).data('varnam-lang')
 				};
-		                var server = $(document.activeElement).data('varnam-server');
+                var server = $(document.activeElement).data('varnam-server');
 				var vurl = learnUrlFor(server, $.param(params));
 				chrome.extension.sendMessage({
 					action: "fetch",
