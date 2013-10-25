@@ -118,23 +118,19 @@ function endsWith(original, suffix) {
     return original.indexOf(suffix, original.length - suffix.length) !== -1;
 }
 
-function fetchUrl() {
-    return varnamServer().concat('tl');
+function fetchUrl(lang, word) {
+    return varnamServer().concat('api/tl/').concat(lang).concat('/').concat(word);
 }
 
 function learnUrl() {
-    return varnamServer().concat('learn');
+    return varnamServer().concat('api/learn');
 }
 
 function fetchSuggestions(data) {
 	var suggestionsRequest = request({
-		url: fetchUrl(),
+		url: fetchUrl(data.lang, data.word),
 		headers: {
 			Connection: 'keep-alive'
-		},
-		content: {
-			text: data.word,
-			lang: data.lang
 		},
 		onComplete: function(response) {
             emitSafely('showPopup', response.json);
@@ -197,7 +193,6 @@ function emitSafely(funcName, payload) {
     }
 }
 
-var addontab = require("addon-page");
 exports.main = function(options, callbacks) {
 	if (options.loadReason == 'install') {
 		require("tabs").open(data.url("howto.html"));

@@ -2,7 +2,7 @@
     "name": "varnam-input-tools",
     "license": "MPL 2.0",
     "author": "Navaneeth K.N <navaneethkn@gmail.com>",
-    "version": "2.2",
+    "version": "2.3",
     "fullName": "Varnam - Transliteration based input tool for indian languages",
     "id": "jid1-iufO1SfBv6wvAw",
     "description": "Varnam is a transliteration based input system for indian languages. Varnam uses phonetic based transliteration and enables indic input on all the webpages. After installing, right click on any input field and choose the desired language from the 'Varnam' menu.",
