@@ -97,7 +97,7 @@ function validUrl(urlLikeString) {
 }
 
 function varnamLearnUrl() {
-    return varnamServer().concat('learn');
+    return varnamServer().concat('api/learn');
 }
 
 function learnWord(data) {

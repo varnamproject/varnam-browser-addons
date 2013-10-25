@@ -263,8 +263,8 @@
 		});
 	}
 
-    function learnUrlFor(server, params) {
-        return server.concat("tl?").concat(params);
+    function suggestionUrlFor(server, lang, text) {
+        return server.concat("api/tl/").concat(lang).concat("/").concat(text);
     }
 
 	function showSuggestions() {
@@ -276,12 +276,10 @@
 		if ($.trim(wordUnderCaret.word) !== '') {
 			if (hasTextChanged() && ! skipTextChange) {
 				showProgress();
-				var params = {
-					'text': wordUnderCaret.word,
-					'lang': $(document.activeElement).data('varnam-lang')
-				};
+				var text = wordUnderCaret.word;
+                var lang = $(document.activeElement).data('varnam-lang');
                 var server = $(document.activeElement).data('varnam-server');
-				var vurl = learnUrlFor(server, $.param(params));
+				var vurl = suggestionUrlFor(server, lang, text);
 				chrome.extension.sendMessage({
 					action: "fetch",
 					"vurl": vurl
