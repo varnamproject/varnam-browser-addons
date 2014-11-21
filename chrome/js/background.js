@@ -97,14 +97,15 @@ function validUrl(urlLikeString) {
 }
 
 function varnamLearnUrl() {
-    return varnamServer().concat('api/learn');
+    return varnamServer().concat('learn');
 }
 
 function learnWord(data) {
     var vurl = varnamLearnUrl();
     var xhr = new XMLHttpRequest();
     xhr.open("POST", vurl, true);
-    xhr.send(data.params);
+    xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+    xhr.send('{"lang":"'+data.lang+'","text": "'+data.text+'"}');
 }
 
 chrome.extension.onMessage.addListener(

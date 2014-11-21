@@ -264,7 +264,7 @@
 	}
 
     function suggestionUrlFor(server, lang, text) {
-        return server.concat("api/tl/").concat(lang).concat("/").concat(text);
+        return server.concat("tl/").concat(lang).concat("/").concat(text);
     }
 
 	function showSuggestions() {
