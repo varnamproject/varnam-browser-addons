@@ -119,11 +119,11 @@ function endsWith(original, suffix) {
 }
 
 function fetchUrl(lang, word) {
-    return varnamServer().concat('api/tl/').concat(lang).concat('/').concat(word);
+    return varnamServer().concat('tl/').concat(lang).concat('/').concat(word);
 }
 
 function learnUrl() {
-    return varnamServer().concat('api/learn');
+    return varnamServer().concat('learn');
 }
 
 function fetchSuggestions(data) {
@@ -140,16 +140,15 @@ function fetchSuggestions(data) {
 }
 
 function learnWord(data) {
+  var content = '{"lang":"'+data.lang+'","text": "'+data.text+'"}';
 	var learnRequest = request({
 		url: learnUrl(),
+    contentType: 'application/json; charset=utf-8',
 		headers: {
 			Connection: 'keep-alive'
 		},
-		content: {
-			text: data.word,
-			lang: data.lang
-		}
-	});
+		content: content
+  });
 	learnRequest.post();
 }
 
