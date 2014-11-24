@@ -1,8 +1,8 @@
-const data = require("self").data;
-const contextMenu = require("context-menu");
-const tabs = require('tabs');
-const request = require("request").Request;
-const prefs = require("simple-prefs").prefs;
+const data = require("sdk/self").data;
+const contextMenu = require("sdk/context-menu");
+const tabs = require('sdk/tabs');
+const request = require("sdk/request").Request;
+const prefs = require("sdk/simple-prefs").prefs;
 const notifications = require("sdk/notifications");
 const Hotkey = require("sdk/hotkeys").Hotkey;
 
@@ -15,7 +15,7 @@ const options = {
 };
 
 var workers = [];
-var pageMod = require("page-mod");
+var pageMod = require("sdk/page-mod");
 var page = pageMod.PageMod({
 	include: '*',
 	contentScriptWhen: 'ready',
@@ -194,7 +194,7 @@ function emitSafely(funcName, payload) {
 
 exports.main = function(options, callbacks) {
 	if (options.loadReason == 'install') {
-		require("tabs").open(data.url("howto.html"));
+		require("sdk/tabs").open(data.url("howto.html"));
 	}
 };
 
